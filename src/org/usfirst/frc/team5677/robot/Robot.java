@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import com.ctre.CANTalon;
 import org.usfirst.frc.team5677.robot.commands.ExampleCommand;
 import org.usfirst.frc.team5677.robot.subsystems.ExampleSubsystem;
 
@@ -22,7 +22,8 @@ public class Robot extends IterativeRobot {
 
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 	public static OI oi;
-
+	
+	CANTalon testTalon;
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
@@ -35,6 +36,7 @@ public class Robot extends IterativeRobot {
 		oi = new OI();
 		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
+		testTalon = new CANTalon(1);
 		SmartDashboard.putData("Auto mode", chooser);
 	}
 
@@ -96,6 +98,7 @@ public class Robot extends IterativeRobot {
 		// this line or comment it out.
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
+		testTalon.changeControlMode(CANTalon.TalonControlMode.Voltage);
 	}
 
 	/**
@@ -104,6 +107,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		testTalon.set(6.0);
 	}
 
 	/**
