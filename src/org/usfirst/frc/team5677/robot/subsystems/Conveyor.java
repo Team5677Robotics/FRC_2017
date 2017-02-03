@@ -8,7 +8,7 @@ public class Conveyor{
 
     private static Conveyor _instance = new Conveyor();
 
-    public static Conveyor getInstance(){
+    public static Conveyor getInstance() {
 	return _instance;
     }
 
@@ -16,15 +16,15 @@ public class Conveyor{
 
     private ConveyorState state = ConveyorState.OFF;
 
-    private Conveyor(){
+    private Conveyor() {
 	conveyorRoller = new CANTalon(CANTalon.kConveyorRoller);
 	conveyorRoller.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 	ConveyorRoller.set(0.0);
     }
 
     
-    public void toggleConveyor(ConveyorState intakeState){
-	switch(intakeState){
+    public void toggleConveyor(ConveyorState intakeState) {
+	switch(intakeState) {
 
 	case OFF:
 	    conveyorRoller.set(0.0);
