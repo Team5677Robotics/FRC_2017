@@ -5,16 +5,18 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import org.usfirst.frc.team5677.lib.Segment;
+import org.usfirst.frc.team5677.lib.trajectory.Segment;
+import org.usfirst.frc.team5677.lib.trajectory.TrajectoryGenerator;
 import org.usfirst.frc.team5677.robot.controllers.ArcadeDrive;
 import org.usfirst.frc.team5677.robot.states.ConveyorState;
 import org.usfirst.frc.team5677.robot.states.IntakeState;
 import org.usfirst.frc.team5677.robot.subsystems.Conveyor;
 import org.usfirst.frc.team5677.robot.subsystems.Drive;
 import org.usfirst.frc.team5677.robot.subsystems.Intake;
+import org.usfirst.frc.team5677.robot.controllers.DriveController;
+import org.usfirst.frc.team5677.robot.loops.DriveLoop;
 
-//import org.usfirst.frc.team5677.robot.controllers.DriveController;
-//import org.usfirst.frc.team5677.robot.loops.DriveLoop;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the IterativeRobot documentation. If you change the name of this class
@@ -26,14 +28,14 @@ public class Robot extends IterativeRobot {
   Drive drive;
   ControlBoard controls;
   ArcadeDrive smartDrive;
-  //TrajectoryGenerator smartGenerator;
+  TrajectoryGenerator smartGenerator;
   Segment[] testTrajectory1, testTrajectory2;
-  //DriveController dc;
-  //DriveLoop dl;
+  DriveController dc;
+  DriveLoop dl;
   Notifier n;
   Intake intake;
   Conveyor conveyor;
-
+    
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -43,7 +45,7 @@ public class Robot extends IterativeRobot {
     drive = Drive.getInstance();
     smartDrive = new ArcadeDrive(0.075, drive);
     controls = new ControlBoard(0, 1);
-    //smartGenerator = new TrajectoryGenerator(15.0, 20.0, 100);
+    smartGenerator = new TrajectoryGenerator(15.0, 20.0, 100);
     intake = Intake.getInstance();
     conveyor = Conveyor.getInstance();
     System.out.println("Hello Robot");
@@ -69,22 +71,24 @@ public class Robot extends IterativeRobot {
   @Override
   public void autonomousInit() {
     //System.out.println("Auto Init");
-    /*testTrajectory1 = smartGenerator.calcTrajectory(0.0,0.0,5.0);
+    //drive.setRightSpeed(1.0);
+    testTrajectory1 = smartGenerator.calcTrajectory(0.0,0.0,5.0);
     testTrajectory2 = smartGenerator.calcTrajectory(0.0,0.0,5.0);
-    dc = new DriveController(testTrajectory1, testTrajectory2, drive);
+    dc = new DriveController(testTrajectory1, drive);
     dl = new DriveLoop(dc);
     n = new Notifier(dl);
-    n.startPeriodic(0.01);*/
+    n.startPeriodic(0.01);
   }
-
+    
   @Override
   public void disabledPeriodic() {
-    //n.stop();
+      //n.stop();
   }
   /** This function is called periodically during autonomous */
   @Override
   public void autonomousPeriodic() {
-    Scheduler.getInstance().run();
+      //Scheduler.getInstance().run(); 
+      
   }
 
   @Override
@@ -103,10 +107,10 @@ public class Robot extends IterativeRobot {
     Scheduler.getInstance().run();
     double throttle = controls.getDriveThrottle();
     double turn = controls.getDriveTurn();
-    smartDrive.setSpeed(throttle, turn);
-
+    smartDrive.setSpeed(throttle, turn); 
+    System.out.println("Left Encoder= "+drive.getLeftEncoder()+" ------ Right Encoder: "+drive.getRightEncoder());
     /** This is just a test condition to make sure that all of the subsystems work properly. */
-    if (controls.getIntakeInButton()) {
+    /*if (controls.getIntakeInButton()) {
       intake.toggleIntake(IntakeState.IN);
     } else if (controls.getIntakeOutButton()) {
       intake.toggleIntake(IntakeState.OUT);
@@ -119,11 +123,11 @@ public class Robot extends IterativeRobot {
     } else if (controls.getConveyorDownButton()) {
       conveyor.toggleConveyor(ConveyorState.DOWN);
     } else {
-      conveyor.toggleConveyor(ConveyorState.OFF);
-    }
+      conveyor.toggleConveyor(ConveyorState.OFF/*);
+    }*/
 
     /** This is the actual code that will run the robot for competition. */
-    /*
+    
     if(controls.getIntakeBallButton()){
         intake.toggleIntake(IntakeState.IN);
         conveyor.toggleConveyor(ConveyorState.DOWN);
@@ -134,7 +138,6 @@ public class Robot extends IterativeRobot {
         intake.toggleIntake(IntakeState.OFF);
         conveyor.toggleConveyor(ConveyorState.OFF);
     }
-    */
   }
 
   /** This function is called periodically during test mode */

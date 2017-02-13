@@ -32,6 +32,9 @@ public class Drive {
     leftSlave1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
     leftSlave2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 
+    leftSlave2.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative); 
+    rightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+    
     rightMaster.set(0.0);
     rightSlave1.set(0.0);
     rightSlave2.set(0.0);
@@ -106,4 +109,18 @@ public class Drive {
     leftSlave1.set(speed);
     leftSlave2.set(speed);
   }
+
+    public int getRightEncoder(){
+	return rightMaster.getEncPosition();
+    }
+
+    public int getLeftEncoder(){
+	leftSlave2.reverseSensor(true);
+	return leftSlave2.getEncPosition();
+    }
+
+    public CANTalon getRightTalon(){
+	return rightMaster;
+    }
+    
 }

@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5677.lib;
+package org.usfirst.frc.team5677.lib.trajectory;
 
 public class Segment {
   double velocity;
@@ -6,8 +6,8 @@ public class Segment {
   double position;
 
   public Segment(double velocity, double acceleration, double position) {
-    this.velocity = velocity;
-    this.acceleration = acceleration;
+      this.velocity = velocity;
+      this.acceleration = acceleration;
     this.position = position;
   }
 

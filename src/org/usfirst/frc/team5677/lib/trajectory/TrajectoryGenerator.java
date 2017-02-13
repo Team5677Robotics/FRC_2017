@@ -1,6 +1,6 @@
-package org.usfirst.frc.team5677.lib;
+package org.usfirst.frc.team5677.lib.trajectory;
 
-import org.usfirst.frc.team5677.lib.Segment;
+import org.usfirst.frc.team5677.lib.trajectory.Segment;
 
 public class TrajectoryGenerator {
 
