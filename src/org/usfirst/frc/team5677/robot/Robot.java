@@ -72,9 +72,10 @@ public class Robot extends IterativeRobot {
   public void autonomousInit() {
     //System.out.println("Auto Init");
     //drive.setRightSpeed(1.0);
-    testTrajectory1 = smartGenerator.calcTrajectory(0.0,0.0,5.0);
-    testTrajectory2 = smartGenerator.calcTrajectory(0.0,0.0,5.0);
-    dc = new DriveController(testTrajectory1, drive);
+    testTrajectory1 = smartGenerator.calcTrajectory(0.0,0.0,7.0);
+    testTrajectory2 = smartGenerator.calcTrajectory(0.0,0.0,7.0);
+    System.out.println(testTrajectory1.length);
+    dc = new DriveController(testTrajectory1, drive, false);
     dl = new DriveLoop(dc);
     n = new Notifier(dl);
     n.startPeriodic(0.01);

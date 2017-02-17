@@ -30,6 +30,6 @@ public class Segment {
   }
 
   public String toString() {
-    return velocity + " " + acceleration + " " + position;
+    return velocity + ", " + acceleration + ", " + position;
   }
 }

@@ -37,6 +37,7 @@ public class TrajectoryFollower {
 	double velocity = s.getVelocity();
 	double acceleration = s.getAcceleration();
 	double position = s.getPosition();
-	return getFeedForward(velocity, acceleration) + getFeedBack(position, currPosition);
+	//return getFeedForward(velocity, acceleration) + getFeedBack(position, currPosition);
+	return getFeedForward(velocity,acceleration);
     };
 }
