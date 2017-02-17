@@ -1,7 +1,7 @@
 package org.usfirst.frc.team5677.robot.auto;
 
-import org.usfirst.frc.team5677.robot.DriveController;
-import org.usfirst.frc.team5677.robot.DriveLoop;
+import org.usfirst.frc.team5677.robot.controllers.DriveController;
+import org.usfirst.frc.team5677.robot.loops.DriveLoop;
 import org.usfirst.frc.team5677.lib.TrajectoryGenerator;
 import org.usfirst.frc.team5677.lib.Segment;
 import org.usfirst.frc.team5677.robot.loops.MultiLooper;
