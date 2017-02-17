@@ -23,7 +23,6 @@ public class Intake {
   }
 
   public void toggleIntake(IntakeState intakeState) {
-
     switch (intakeState) {
       case OFF:
         intakeRoller.set(0.0);

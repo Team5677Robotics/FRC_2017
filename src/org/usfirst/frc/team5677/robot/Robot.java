@@ -130,7 +130,7 @@ public class Robot extends IterativeRobot {
     /** This is the actual code that will run the robot for competition. */
     
     if(controls.getIntakeBallButton()){
-        intake.toggleIntake(IntakeState.IN);
+        intake.toggleIntake(IntakeState.OUT);
         conveyor.toggleConveyor(ConveyorState.DOWN);
     }else if(controls.getScoreLowGoalButton()){
         intake.toggleIntake(IntakeState.OUT);

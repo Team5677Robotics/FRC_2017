@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5677.robot.auto;
+/*package org.usfirst.frc.team5677.robot.auto;
 
 import org.usfirst.frc.team5677.robot.controllers.DriveController;
 import org.usfirst.frc.team5677.robot.loops.DriveLoop;
@@ -30,8 +30,4 @@ public class RightGearOnlyMode{
 	loops[1] = driveBackwardsLoop;
 	ml = new MultiLooper(loops);
     }
-
-    
-
-    
-}
+}*/
