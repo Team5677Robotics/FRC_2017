@@ -17,7 +17,7 @@ public class RightGearOnlyMode{
     private Loop[] loops = new Loop[2];
     private MultiLooper ml;
 
-    public RightGearOnlyMode(d, smartGenerator){
+    public RightGearOnlyMode(Drive d, TrajectoryGenerator smartGenerator){
 	this.drive = drive;
 	this.smartGenerator = smartGenerator;
 	trajectories[0] = smartGenerator.calcTrajectory(0.0,0.0,7.0);	
