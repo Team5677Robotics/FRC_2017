@@ -13,12 +13,16 @@ public class DriveController{
     private TrajectoryFollower follow = new TrajectoryFollower();
     private Drive d;
     private boolean isBackward = false;
+    private boolean isRight = false;
+    private boolean isLeft = false;
     
-    public DriveController(Segment[] traj, Drive d, boolean isBackward){
+    public DriveController(Segment[] traj, Drive d, boolean isBackward, boolean isRight, boolean isLeft){
 	this.traj = traj;
 	this.d = d;
 	i=0;
 	this.isBackward = isBackward;
+	this.isRight = isRight;
+	this.isLeft = isLeft;
 	double kV = 1.0/7.0;
 	double kA = 1.0/85.0;
 	//double kA = 0.0;
@@ -42,7 +46,16 @@ public class DriveController{
 		System.out.println("Backwards");
 		d.setRightSpeed(motorOutput);
 		d.setLeftSpeed(-motorOutput);
+	    }else if(isRight){
+		System.out.println("Right Turn");
+		d.setRightSpeed(-motorOutput);
+		d.setLeftSpeed(-motorOutput);
+	    }else if(isLeft){	
+		System.out.println("Left Turn");
+		d.setRightSpeed(motorOutput);
+		d.setLeftSpeed(motorOutput);
 	    }else{
+		System.out.println("Left V: "+d.getLeftEncoder()+"  -----  Right V:" + d.getRightEncoder());
 		d.setRightSpeed(-motorOutput);
 		d.setLeftSpeed(motorOutput);
 	    }

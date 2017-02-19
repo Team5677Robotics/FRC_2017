@@ -12,4 +12,5 @@ public class Constants {
   public static final int kConveyorRoller = 1;
 
   public static final double kArcadeDriveGain = 0.075;
+    public static final double kWheelBase = 27.0;
 }

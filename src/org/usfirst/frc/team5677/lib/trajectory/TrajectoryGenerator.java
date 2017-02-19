@@ -32,8 +32,9 @@ public class TrajectoryGenerator {
         Math.sqrt(this.maxA * totalDistance);
 
     return Math.min(adjustedMaxV, this.maxV);
-  }
+  }    
 
+    
   public Segment[] calcTrajectory(double initialV, double endingV, double totalDistance) {
     double adjustedMaxV = calcAdjustedMaxV(initialV, endingV, totalDistance);
     double rampUpTime = (adjustedMaxV - initialV) / this.maxA;

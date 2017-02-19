@@ -14,8 +14,13 @@ public class Drive {
     return _instance;
   }
 
-  private final CANTalon rightMaster, rightSlave1, rightSlave2, leftMaster, leftSlave1, leftSlave2;
-  //private final Solenoid shifter;
+    private CANTalon rightMaster;
+    private CANTalon rightSlave1;
+  private CANTalon rightSlave2;
+    private CANTalon leftMaster;
+    private CANTalon leftSlave1;
+    private CANTalon leftSlave2;
+    //private final Solenoid shifter;
 
   private Drive() {
     rightMaster = new CANTalon(Constants.kRightDriveMaster);
@@ -110,13 +115,22 @@ public class Drive {
     leftSlave2.set(speed);
   }
 
+    public double angleToDistance(double angle){
+	double circumOfRobot = Constants.kWheelBase*Math.PI;
+	System.out.println(circumOfRobot);
+	double percentCircum = angle/360.0;
+	System.out.println(percentCircum);
+	double distanceOfTurn = percentCircum*circumOfRobot;
+	return distanceOfTurn/12.0;
+    }
+    
     public int getRightEncoder(){
-	return rightMaster.getEncPosition();
+	return rightMaster.getEncVelocity();
     }
 
     public int getLeftEncoder(){
 	leftSlave2.reverseSensor(true);
-	return leftSlave2.getEncPosition();
+	return leftSlave2.getEncVelocity();
     }
 
     public CANTalon getRightTalon(){

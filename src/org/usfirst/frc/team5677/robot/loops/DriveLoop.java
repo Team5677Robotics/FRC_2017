@@ -8,14 +8,17 @@ public class DriveLoop extends Loop{
     private DriveController d;
     private Timer t;
     private double prevTime = -1.0;
+    
     public DriveLoop(DriveController d){
+	super();
 	this.d = d;
 	t = new Timer();
     }
     
     @Override
     public void run(){
-	//System.out.println("Hello");
+	//System.out.println("Hello");	
+	super.setStart();
 	double dt;
 	if(prevTime == -1.0){
 	    prevTime = t.getFPGATimestamp();
@@ -29,10 +32,11 @@ public class DriveLoop extends Loop{
 	
 	if(d.isDone() == false){
 	    d.control(dt);
+	}else{
+	    super.setDone();
 	}
+	
     }
-
-    public boolean isDone(){
-	return d.isDone();
-    }
+	
+   
 }

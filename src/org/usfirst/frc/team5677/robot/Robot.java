@@ -15,7 +15,7 @@ import org.usfirst.frc.team5677.robot.subsystems.Drive;
 import org.usfirst.frc.team5677.robot.subsystems.Intake;
 import org.usfirst.frc.team5677.robot.controllers.DriveController;
 import org.usfirst.frc.team5677.robot.loops.DriveLoop;
-
+import org.usfirst.frc.team5677.robot.auto.RightGearOnlyMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -27,14 +27,11 @@ public class Robot extends IterativeRobot {
   Command autonomousCommand;
   Drive drive;
   ControlBoard controls;
-  ArcadeDrive smartDrive;
+  ArcadeDrive smartDrive; 
   TrajectoryGenerator smartGenerator;
-  Segment[] testTrajectory1, testTrajectory2;
-  DriveController dc;
-  DriveLoop dl;
-  Notifier n;
   Intake intake;
   Conveyor conveyor;
+  RightGearOnlyMode rightGearAutoMode;
     
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -72,13 +69,11 @@ public class Robot extends IterativeRobot {
   public void autonomousInit() {
     //System.out.println("Auto Init");
     //drive.setRightSpeed(1.0);
-    testTrajectory1 = smartGenerator.calcTrajectory(0.0,0.0,7.0);
-    testTrajectory2 = smartGenerator.calcTrajectory(0.0,0.0,7.0);
-    System.out.println(testTrajectory1.length);
-    dc = new DriveController(testTrajectory1, drive, false);
-    dl = new DriveLoop(dc);
-    n = new Notifier(dl);
-    n.startPeriodic(0.01);
+    
+    //System.out.println(drive.angleToDistance(90.0));
+    rightGearAutoMode = new RightGearOnlyMode(drive, smartGenerator);
+    Notifier n = new Notifier(rightGearAutoMode);
+    n.startPeriodic(0.01);;  
   }
     
   @Override
