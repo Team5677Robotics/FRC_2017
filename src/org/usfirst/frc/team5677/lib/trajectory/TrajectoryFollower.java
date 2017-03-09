@@ -24,7 +24,9 @@ public class TrajectoryFollower {
   }
 
   public double getFeedBack(double setpointPosition, double actualPosition) {
+      System.out.println("setpointPosition= "+setpointPosition+" ----------  actualPosition= "+actualPosition);
     double error = setpointPosition - actualPosition;
+    //    System.out.println("Error: "+error);
     this.sumError += error;
     double errorDt = (error - this.prevError) / this.dt;
     this.prevError = error;
@@ -37,7 +39,7 @@ public class TrajectoryFollower {
 	double velocity = s.getVelocity();
 	double acceleration = s.getAcceleration();
 	double position = s.getPosition();
-	//return getFeedForward(velocity, acceleration) + getFeedBack(position, currPosition);
-	return getFeedForward(velocity,acceleration);
+	return getFeedForward(velocity, acceleration) + getFeedBack(position, currPosition);
+	//return getFeedForward(velocity,acceleration);
     };
 }

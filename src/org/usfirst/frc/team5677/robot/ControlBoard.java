@@ -19,27 +19,19 @@ public class ControlBoard {
     return joystick1.getRawAxis(1);
   }
 
-  public boolean getIntakeInButton() {
-    return joystick2.getRawButton(2);
-  }
+    public boolean getLowGearButton(){
+	return joystick1.getRawButton(5);
+    }
+    
+    public boolean getHangButton(){
+	return joystick1.getRawButton(2);
+    }
+    
+    public boolean getFeedGearButton(){
+	return joystick2.getRawButton(5);
+    }
 
-  public boolean getIntakeOutButton() {
-    return joystick2.getRawButton(3);
-  }
-
-  public boolean getConveyorUpButton() {
-    return joystick2.getRawButton(1);
-  }
-
-  public boolean getConveyorDownButton() {
-    return joystick2.getRawButton(4);
-  }
-
-  public boolean getIntakeBallButton() {
-    return joystick2.getRawButton(2);
-  }
-
-  public boolean getScoreLowGoalButton() {
-    return joystick2.getRawButton(4);
-  }
+    public boolean getScoreGearButton(){
+	return joystick1.getRawButton(3);
+    }
 }

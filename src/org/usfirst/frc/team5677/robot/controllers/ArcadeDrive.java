@@ -24,7 +24,7 @@ public class ArcadeDrive {
     }
 
     leftSpeed = throttle + turn;
-    rightSpeed = throttle - turn;
+    rightSpeed = throttle-turn;
 
     skimmedLeftSpeed = leftSpeed + skim(rightSpeed);
     skimmedRightSpeed = rightSpeed + skim(leftSpeed);

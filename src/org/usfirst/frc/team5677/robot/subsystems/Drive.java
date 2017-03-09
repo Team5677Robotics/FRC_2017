@@ -2,6 +2,7 @@ package org.usfirst.frc.team5677.robot.subsystems;
 
 import com.ctre.CANTalon;
 import org.usfirst.frc.team5677.robot.Constants;
+import edu.wpi.first.wpilibj.Solenoid;
 
 /** */
 public class Drive {
@@ -20,8 +21,16 @@ public class Drive {
     private CANTalon leftMaster;
     private CANTalon leftSlave1;
     private CANTalon leftSlave2;
+    private Solenoid shifter;
+    
     //private final Solenoid shifter;
 
+    private enum ShifterState{
+	HIGH, LOW;
+    }
+
+    private ShifterState shifterState = ShifterState.HIGH;
+    
   private Drive() {
     rightMaster = new CANTalon(Constants.kRightDriveMaster);
     rightSlave1 = new CANTalon(Constants.kRightDriveSlave1);
@@ -29,7 +38,8 @@ public class Drive {
     leftMaster = new CANTalon(Constants.kLeftDriveMaster);
     leftSlave1 = new CANTalon(Constants.kLeftDriveSlave1);
     leftSlave2 = new CANTalon(Constants.kLeftDriveSlave2);
-
+    shifter = new Solenoid(Constants.kShifter);
+    
     rightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
     rightSlave1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
     rightSlave2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
@@ -39,7 +49,9 @@ public class Drive {
 
     leftSlave2.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative); 
     rightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
-    
+    leftSlave2.configEncoderCodesPerRev(1024);
+    rightMaster.configEncoderCodesPerRev(1024);
+    rightMaster.reverseSensor(true);
     rightMaster.set(0.0);
     rightSlave1.set(0.0);
     rightSlave2.set(0.0);
@@ -49,67 +61,27 @@ public class Drive {
     //shifter = new Solenoid()
   }
 
-  public void setMotionProfileMode() {
-    rightMaster.changeControlMode(CANTalon.TalonControlMode.MotionProfile);
-    rightSlave1.changeControlMode(CANTalon.TalonControlMode.MotionProfile);
-    rightSlave2.changeControlMode(CANTalon.TalonControlMode.MotionProfile);
-    leftMaster.changeControlMode(CANTalon.TalonControlMode.MotionProfile);
-    leftSlave1.changeControlMode(CANTalon.TalonControlMode.MotionProfile);
-    leftSlave2.changeControlMode(CANTalon.TalonControlMode.MotionProfile);
-  }
-
-  public void setRightTrajectoryPoint(CANTalon.TrajectoryPoint rightPoint) {
-    rightMaster.pushMotionProfileTrajectory(rightPoint);
-    rightSlave1.pushMotionProfileTrajectory(rightPoint);
-    rightSlave2.pushMotionProfileTrajectory(rightPoint);
-  }
-
-  public void setLeftTrajectoryPoint(CANTalon.TrajectoryPoint leftPoint) {
-    leftMaster.pushMotionProfileTrajectory(leftPoint);
-    leftSlave1.pushMotionProfileTrajectory(leftPoint);
-    leftSlave2.pushMotionProfileTrajectory(leftPoint);
-  }
-
-  public void processMPBuffer() {
-
-    rightMaster.processMotionProfileBuffer();
-    rightSlave1.processMotionProfileBuffer();
-    rightSlave2.processMotionProfileBuffer();
-    leftMaster.processMotionProfileBuffer();
-    leftSlave1.processMotionProfileBuffer();
-    leftSlave2.processMotionProfileBuffer();
-  }
-
-  public void setMPControlPeriod(int period) {
-    rightMaster.changeMotionControlFramePeriod(period);
-    rightSlave1.changeMotionControlFramePeriod(period);
-    rightSlave2.changeMotionControlFramePeriod(period);
-    leftMaster.changeMotionControlFramePeriod(period);
-    leftSlave1.changeMotionControlFramePeriod(period);
-    leftSlave2.changeMotionControlFramePeriod(period);
-  }
-
-  //public CANTalon.MotionProfileStatus getMPStatus(){
-  //return rightMaster.getMotionProfileStatus();
-  //}
-
-  public void setMPOutput(CANTalon.SetValueMotionProfile out) {
-    rightMaster.set(out.value);
-    rightSlave1.set(out.value);
-    rightSlave2.set(out.value);
-
-    leftMaster.set(out.value);
-    leftSlave1.set(out.value);
-    leftSlave2.set(out.value);
-  }
 
   public void setRightSpeed(double speed) {
+      //speed = -speed;
+      //speed = 0.0;
     rightMaster.set(speed);
     rightSlave1.set(speed);
     rightSlave2.set(speed);
+    
   }
 
+    public void shiftLowGear(boolean state){
+	if(state){
+	    shifter.set(true);
+	}else{
+	    shifter.set(false);
+	}
+    }
+
   public void setLeftSpeed(double speed) {
+      //speed = -speed;
+      //speed=0.0;
     leftMaster.set(speed);
     leftSlave1.set(speed);
     leftSlave2.set(speed);
@@ -123,16 +95,35 @@ public class Drive {
 	double distanceOfTurn = percentCircum*circumOfRobot;
 	return distanceOfTurn/12.0;
     }
+
+    public void isEncodersPresent(){
+	System.out.println(leftSlave2.isSensorPresent(CANTalon.FeedbackDevice.CtreMagEncoder_Relative));
+    }
+    public double getRightEncoder(){
+	return rightMaster.getPosition();
+    }
+
+    public double getLeftEncoder(){
+	//leftSlave2.reverseSensor(true);
+	return leftSlave2.getPosition();
+    }
+
+    public void resetEncoders(){
+	leftSlave2.setPosition(0.0);
+        rightMaster.setPosition(0.0);
+
+        leftSlave2.setEncPosition(0);
+        rightMaster.setEncPosition(0);
+    }
+
+    public double getLeftSpeed(){
+	return leftSlave2.getSpeed();
+    }
+
+    public double getRightSpeed(){
+	return rightMaster.getSpeed();
+    }
     
-    public int getRightEncoder(){
-	return rightMaster.getEncVelocity();
-    }
-
-    public int getLeftEncoder(){
-	leftSlave2.reverseSensor(true);
-	return leftSlave2.getEncVelocity();
-    }
-
     public CANTalon getRightTalon(){
 	return rightMaster;
     }

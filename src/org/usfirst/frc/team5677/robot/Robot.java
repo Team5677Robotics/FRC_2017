@@ -2,20 +2,25 @@ package org.usfirst.frc.team5677.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import org.usfirst.frc.team5677.lib.trajectory.Segment;
 import org.usfirst.frc.team5677.lib.trajectory.TrajectoryGenerator;
 import org.usfirst.frc.team5677.robot.controllers.ArcadeDrive;
+import org.usfirst.frc.team5677.lib.logging.Logger;
 import org.usfirst.frc.team5677.robot.states.ConveyorState;
 import org.usfirst.frc.team5677.robot.states.IntakeState;
-import org.usfirst.frc.team5677.robot.subsystems.Conveyor;
+import org.usfirst.frc.team5677.robot.states.GearState;
 import org.usfirst.frc.team5677.robot.subsystems.Drive;
-import org.usfirst.frc.team5677.robot.subsystems.Intake;
+import org.usfirst.frc.team5677.robot.subsystems.Gear;
+import org.usfirst.frc.team5677.robot.subsystems.GearPuncher;
+import org.usfirst.frc.team5677.robot.subsystems.Hanger;
 import org.usfirst.frc.team5677.robot.controllers.DriveController;
 import org.usfirst.frc.team5677.robot.loops.DriveLoop;
 import org.usfirst.frc.team5677.robot.auto.RightGearOnlyMode;
+import edu.wpi.first.wpilibj.Compressor;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,15 +29,18 @@ import org.usfirst.frc.team5677.robot.auto.RightGearOnlyMode;
  * resource directory.
  */
 public class Robot extends IterativeRobot {
+    Logger logger;
   Command autonomousCommand;
   Drive drive;
   ControlBoard controls;
   ArcadeDrive smartDrive; 
   TrajectoryGenerator smartGenerator;
-  Intake intake;
-  Conveyor conveyor;
   RightGearOnlyMode rightGearAutoMode;
-    
+  Compressor compressor;
+    Gear gear;
+    GearPuncher gearPuncher;
+    Hanger hanger;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -42,10 +50,15 @@ public class Robot extends IterativeRobot {
     drive = Drive.getInstance();
     smartDrive = new ArcadeDrive(0.075, drive);
     controls = new ControlBoard(0, 1);
-    smartGenerator = new TrajectoryGenerator(15.0, 20.0, 100);
-    intake = Intake.getInstance();
-    conveyor = Conveyor.getInstance();
+    smartGenerator = new TrajectoryGenerator(15.0, 16.0, 100); 
+    gear = Gear.getInstance();
+    gearPuncher = GearPuncher.getInstance();
+    hanger = Hanger.getInstance();
     System.out.println("Hello Robot");
+    compressor = new Compressor();
+    compressor.setClosedLoopControl(true); 
+    drive.resetEncoders();
+    logger = new Logger();
   }
 
   /**
@@ -69,14 +82,14 @@ public class Robot extends IterativeRobot {
   public void autonomousInit() {
     //System.out.println("Auto Init");
     //drive.setRightSpeed(1.0);
-    
-    //System.out.println(drive.angleToDistance(90.0));
-    rightGearAutoMode = new RightGearOnlyMode(drive, smartGenerator);
+   
+    //System.out.println(drive.angleToDistance(45.0)+" D");
+    drive.resetEncoders();
+    rightGearAutoMode = new RightGearOnlyMode(drive, smartGenerator, logger);
     Notifier n = new Notifier(rightGearAutoMode);
-    n.startPeriodic(0.01);;  
+    n.startPeriodic(0.01);  
   }
     
-  @Override
   public void disabledPeriodic() {
       //n.stop();
   }
@@ -95,6 +108,8 @@ public class Robot extends IterativeRobot {
     // this line or comment it out.
     if (autonomousCommand != null) autonomousCommand.cancel();
     //testTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+    drive.resetEncoders();
+    drive.isEncodersPresent();
   }
 
   /** This function is called periodically during operator control */
@@ -105,34 +120,32 @@ public class Robot extends IterativeRobot {
     double turn = controls.getDriveTurn();
     smartDrive.setSpeed(throttle, turn); 
     System.out.println("Left Encoder= "+drive.getLeftEncoder()+" ------ Right Encoder: "+drive.getRightEncoder());
-    /** This is just a test condition to make sure that all of the subsystems work properly. */
-    /*if (controls.getIntakeInButton()) {
-      intake.toggleIntake(IntakeState.IN);
-    } else if (controls.getIntakeOutButton()) {
-      intake.toggleIntake(IntakeState.OUT);
-    } else {
-      intake.toggleIntake(IntakeState.OFF);
-    }
-
-    if (controls.getConveyorUpButton()) {
-      conveyor.toggleConveyor(ConveyorState.UP);
-    } else if (controls.getConveyorDownButton()) {
-      conveyor.toggleConveyor(ConveyorState.DOWN);
-    } else {
-      conveyor.toggleConveyor(ConveyorState.OFF/*);
-    }*/
 
     /** This is the actual code that will run the robot for competition. */
-    
-    if(controls.getIntakeBallButton()){
-        intake.toggleIntake(IntakeState.OUT);
-        conveyor.toggleConveyor(ConveyorState.DOWN);
-    }else if(controls.getScoreLowGoalButton()){
-        intake.toggleIntake(IntakeState.OUT);
-        conveyor.toggleConveyor(ConveyorState.UP);
+
+    if(controls.getLowGearButton()){
+	drive.shiftLowGear(true);
+	//System.out.println("test");
     }else{
-        intake.toggleIntake(IntakeState.OFF);
-        conveyor.toggleConveyor(ConveyorState.OFF);
+	drive.shiftLowGear(false);
+    }
+
+    if(controls.getFeedGearButton()){
+	gear.toggleGear(GearState.LOAD);
+	gearPuncher.toggleGearPuncher(GearState.LOAD);
+    }else if(controls.getScoreGearButton()){
+	gear.toggleGear(GearState.SHOOT);
+	Timer.delay(0.5);
+	gearPuncher.toggleGearPuncher(GearState.SHOOT);
+    }else{
+	gear.toggleGear(GearState.LOAD);
+	gearPuncher.toggleGearPuncher(GearState.LOAD);
+    }
+
+    if(controls.getHangButton()){
+	hanger.runHanger();
+    }else{
+	hanger.stopHanger();
     }
   }
 
