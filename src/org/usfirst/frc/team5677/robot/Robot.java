@@ -1,5 +1,6 @@
 package org.usfirst.frc.team5677.robot;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
@@ -43,6 +44,7 @@ public class Robot extends IterativeRobot {
     GearPuncher		gearPuncher;
     Hanger		hanger;
     SendableChooser     autoChooser;
+    CameraServer        cam;
 
     /**
      * This function is run when the robot is first started up and should be used for any
@@ -70,6 +72,9 @@ public class Robot extends IterativeRobot {
 	autoChooser.addDefault("Right Gear Mode", rightGearAutoMode);
 	autoChooser.addObject("Straight Mode", straightMode);
 	SmartDashboard.putData("Auto mode chooser", autoChooser);
+
+	cam = CameraServer.getInstance();
+	cam.startAutomaticCapture("cam0");
     }
 
     /**
