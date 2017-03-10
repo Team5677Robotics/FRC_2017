@@ -16,6 +16,9 @@ public class ArcadeDrive {
     double leftSpeed, rightSpeed, skimmedLeftSpeed, skimmedRightSpeed;
     throttle = -throttle;
 
+    throttle = Math.signum(throttle)*throttle*throttle;
+    turn = Math.signum(turn)*turn*turn;
+
     if (turn < 0.1 && turn > -0.1) {
       turn = 0.0;
     }
