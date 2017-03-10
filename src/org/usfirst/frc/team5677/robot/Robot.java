@@ -20,6 +20,7 @@ import org.usfirst.frc.team5677.robot.subsystems.Hanger;
 import org.usfirst.frc.team5677.robot.controllers.DriveController;
 import org.usfirst.frc.team5677.robot.loops.DriveLoop;
 import org.usfirst.frc.team5677.robot.auto.RightGearOnlyMode;
+import org.usfirst.frc.team5677.robot.auto.StraightOnlyMode;
 import edu.wpi.first.wpilibj.Compressor;
 
 /**
@@ -36,10 +37,12 @@ public class Robot extends IterativeRobot {
     ArcadeDrive		smartDrive; 
     TrajectoryGenerator smartGenerator;
     RightGearOnlyMode	rightGearAutoMode;
+    StraightOnlyMode    straightMode;
     Compressor		compressor;
     Gear		gear;
     GearPuncher		gearPuncher;
     Hanger		hanger;
+    SendableChooser     autoChooser;
 
     /**
      * This function is run when the robot is first started up and should be used for any
@@ -58,7 +61,15 @@ public class Robot extends IterativeRobot {
 	compressor     = new Compressor();
 	compressor.setClosedLoopControl(true); 
 	drive.resetEncoders();
-	logger        = new Logger();
+	logger		  = new Logger();
+	
+	straightMode	  = new StraightOnlyMode(drive, smartGenerator, logger, gear, gearPuncher);
+	rightGearAutoMode = new RightGearOnlyMode(drive, smartGenerator, logger);
+
+	autoChooser       = new SendableChooser();
+	autoChooser.addDefault("Right Gear Mode", rightGearAutoMode);
+	autoChooser.addObject("Straight Mode", straightMode);
+	SmartDashboard.putData("Auto mode chooser", autoChooser);
     }
 
     /**
@@ -85,9 +96,8 @@ public class Robot extends IterativeRobot {
    
 	//System.out.println(drive.angleToDistance(45.0)+" D");
 	drive.resetEncoders();
-	rightGearAutoMode = new RightGearOnlyMode(drive, smartGenerator, logger);
-	Notifier	n = new Notifier(rightGearAutoMode);
-	n.startPeriodic(0.01);  
+	Notifier n = new Notifier((Command) autoChooser.getSelected());
+	n.startPeriodic(0.01);
     }
     
     public void disabledPeriodic() {
