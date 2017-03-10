@@ -5,7 +5,7 @@ public class Loop implements java.lang.Runnable{
 
     public Loop(){
 	isStarted = false;
-	isDone = false;
+	isDone	  = false;
     }
 
     public void run(){

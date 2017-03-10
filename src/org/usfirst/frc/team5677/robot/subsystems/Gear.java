@@ -24,21 +24,21 @@ public class Gear{
 
     public void toggleGear(GearState gearState){
 	switch(gearState){
-	    case LOAD:
-		loader.set(true);
-		locker.set(true);
-		state = GearState.LOAD;
-		break;
-	    case SHOOT:
-		loader.set(false);
-		locker.set(false);
-		state = GearState.SHOOT;
-		break;
-	    default:
-		loader.set(true);
-		locker.set(true);
-		state = GearState.LOAD;
-		break;
+	case LOAD:
+	    loader.set(true);
+	    locker.set(true);
+	    state = GearState.LOAD;
+	    break;
+	case SHOOT:
+	    loader.set(false);
+	    locker.set(false);
+	    state = GearState.SHOOT;
+	    break;
+	default:
+	    loader.set(true);
+	    locker.set(true);
+	    state = GearState.LOAD;
+	    break;
 	}
     }
 

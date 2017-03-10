@@ -6,18 +6,18 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 /** */
 public class Drive {
-  // Put methods for controlling this subsystems
-  // here. Call these from Commands.
+    // Put methods for controlling this subsystems
+    // here. Call these from Commands.
 
-  private static Drive _instance = new Drive();
+    private static Drive _instance = new Drive();
 
-  public static Drive getInstance() {
-    return _instance;
-  }
+    public static Drive getInstance() {
+	return _instance;
+    }
 
     private CANTalon rightMaster;
     private CANTalon rightSlave1;
-  private CANTalon rightSlave2;
+    private CANTalon rightSlave2;
     private CANTalon leftMaster;
     private CANTalon leftSlave1;
     private CANTalon leftSlave2;
@@ -31,45 +31,45 @@ public class Drive {
 
     private ShifterState shifterState = ShifterState.HIGH;
     
-  private Drive() {
-    rightMaster = new CANTalon(Constants.kRightDriveMaster);
-    rightSlave1 = new CANTalon(Constants.kRightDriveSlave1);
-    rightSlave2 = new CANTalon(Constants.kRightDriveSlave2);
-    leftMaster = new CANTalon(Constants.kLeftDriveMaster);
-    leftSlave1 = new CANTalon(Constants.kLeftDriveSlave1);
-    leftSlave2 = new CANTalon(Constants.kLeftDriveSlave2);
-    shifter = new Solenoid(Constants.kShifter);
+    private Drive() {
+	rightMaster = new CANTalon(Constants.kRightDriveMaster);
+	rightSlave1 = new CANTalon(Constants.kRightDriveSlave1);
+	rightSlave2 = new CANTalon(Constants.kRightDriveSlave2);
+	leftMaster = new CANTalon(Constants.kLeftDriveMaster);
+	leftSlave1 = new CANTalon(Constants.kLeftDriveSlave1);
+	leftSlave2 = new CANTalon(Constants.kLeftDriveSlave2);
+	shifter = new Solenoid(Constants.kShifter);
     
-    rightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-    rightSlave1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-    rightSlave2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-    leftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-    leftSlave1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-    leftSlave2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	rightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	rightSlave1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	rightSlave2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	leftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	leftSlave1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	leftSlave2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 
-    leftSlave2.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative); 
-    rightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
-    leftSlave2.configEncoderCodesPerRev(1024);
-    rightMaster.configEncoderCodesPerRev(1024);
-    rightMaster.reverseSensor(true);
-    rightMaster.set(0.0);
-    rightSlave1.set(0.0);
-    rightSlave2.set(0.0);
-    leftMaster.set(0.0);
-    leftSlave1.set(0.0);
-    leftSlave2.set(0.0);
-    //shifter = new Solenoid()
-  }
+	leftSlave2.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative); 
+	rightMaster.setFeedbackDevice(CANTalon.FeedbackDevice.CtreMagEncoder_Relative);
+	leftSlave2.configEncoderCodesPerRev(1024);
+	rightMaster.configEncoderCodesPerRev(1024);
+	rightMaster.reverseSensor(true);
+	rightMaster.set(0.0);
+	rightSlave1.set(0.0);
+	rightSlave2.set(0.0);
+	leftMaster.set(0.0);
+	leftSlave1.set(0.0);
+	leftSlave2.set(0.0);
+	//shifter = new Solenoid()
+    }
 
 
-  public void setRightSpeed(double speed) {
-      //speed = -speed;
-      //speed = 0.0;
-    rightMaster.set(speed);
-    rightSlave1.set(speed);
-    rightSlave2.set(speed);
+    public void setRightSpeed(double speed) {
+	//speed = -speed;
+	//speed = 0.0;
+	rightMaster.set(speed);
+	rightSlave1.set(speed);
+	rightSlave2.set(speed);
     
-  }
+    }
 
     public void shiftLowGear(boolean state){
 	if(state){
@@ -79,13 +79,13 @@ public class Drive {
 	}
     }
 
-  public void setLeftSpeed(double speed) {
-      //speed = -speed;
-      //speed=0.0;
-    leftMaster.set(speed);
-    leftSlave1.set(speed);
-    leftSlave2.set(speed);
-  }
+    public void setLeftSpeed(double speed) {
+	//speed = -speed;
+	//speed=0.0;
+	leftMaster.set(speed);
+	leftSlave1.set(speed);
+	leftSlave2.set(speed);
+    }
 
     public double angleToDistance(double angle){
 	double circumOfRobot = Constants.kWheelBase*Math.PI;

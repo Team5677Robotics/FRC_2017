@@ -5,38 +5,34 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class DriveLoop extends Loop{
 
-    private DriveController d;
-    private Timer t;
-    private double prevTime = -1.0;
+    private DriveController	d;
+    private Timer		t;
+    private double		prevTime = -1.0;
     
-    public DriveLoop(DriveController d){
+    public DriveLoop(DriveController d) {
 	super();
 	this.d = d;
-	t = new Timer();
+	t      = new Timer();
     }
     
     @Override
     public void run(){
-	//System.out.println("Hello");	
 	super.setStart();
 	double dt;
-	if(prevTime == -1.0){
-	    prevTime = t.getFPGATimestamp();
-	    dt = 0.0;
+	if (prevTime == -1.0) {
+	    prevTime		 = t.getFPGATimestamp();
+	    dt			 = 0.0;
 	}else{
-	    double currTime = t.getFPGATimestamp();
-	    dt = currTime-prevTime;
-	    prevTime = currTime;
+	    double	currTime = t.getFPGATimestamp();
+	    dt			 = currTime-prevTime;
+	    prevTime		 = currTime;
 				     
 	}
 	
-	if(d.isDone() == false){
+	if (d.isDone() == false) {
 	    d.control(dt);
-	}else{
+	} else {
 	    super.setDone();
 	}
-	
     }
-	
-   
 }

@@ -22,18 +22,18 @@ public class GearPuncher{
 
     public void toggleGearPuncher(GearState gearState){
 	switch(gearState){
-	    case LOAD:
-		puncher.set(false);
-		state = GearState.LOAD;
-		break;
-	    case SHOOT:
-	        puncher.set(true);
-		state = GearState.SHOOT;
-		break;
-	    default:
-		puncher.set(false);
-		state = GearState.LOAD;
-		break;
+	case LOAD:
+	    puncher.set(false);
+	    state = GearState.LOAD;
+	    break;
+	case SHOOT:
+	    puncher.set(true);
+	    state = GearState.SHOOT;
+	    break;
+	default:
+	    puncher.set(false);
+	    state = GearState.LOAD;
+	    break;
 	}
     }
 
