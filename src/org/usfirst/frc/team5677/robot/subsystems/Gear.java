@@ -4,7 +4,7 @@ import org.usfirst.frc.team5677.robot.Constants;
 import org.usfirst.frc.team5677.robot.states.GearState;
 import edu.wpi.first.wpilibj.Solenoid;
 
-public class Gear{
+public class Gear {
 
     private static Gear _instance = new Gear();
     
@@ -15,7 +15,7 @@ public class Gear{
     private Solenoid loader, locker;
     private GearState state;
     
-    private Gear(){
+    private Gear() {
 	loader = new Solenoid(Constants.kGearLoader);
 	locker = new Solenoid(Constants.kGearLocker);
 	loader.set(true);
@@ -44,6 +44,10 @@ public class Gear{
 
     public GearState getGearState(){
 	return state;
+    }
+
+    public void closeTop() {
+	loader.set(false);
     }
 }
 

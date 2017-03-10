@@ -149,6 +149,10 @@ public class Robot extends IterativeRobot {
 	} else {
 	    hanger.stopHanger();
 	}
+
+	if (controls.getCorrectionButton()) {
+	    gear.closeTop();
+	} 
     }
 
     /** This function is called periodically during test mode */
