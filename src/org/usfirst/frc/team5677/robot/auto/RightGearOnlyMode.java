@@ -15,10 +15,10 @@ public class RightGearOnlyMode implements java.lang.Runnable{
     private TrajectoryGenerator smartGenerator;
     private Drive drive;
     private Segment[] trajectory1, trajectory2, trajectory3;
-    private DriveController driveStraight, driveBackwards, turnLeft;
-    private DriveLoop driveStraightLoop, driveBackwardsLoop, turnLeftLoop;
+    private DriveController driveStraight11, driveStraight2, turnLeft;
+    private DriveLoop driveStraight1Loop, driveStraight2Loop, turnLeftLoop;
     private Timer t = new Timer();
-    private Notifier n1, n2, n3;
+    //private Notifier n1, n2, n3;
     private Logger l;
     private double prevTime = -1.0;
     
@@ -29,15 +29,13 @@ public class RightGearOnlyMode implements java.lang.Runnable{
 	this.smartGenerator = smartGenerator;
 	trajectory1 = smartGenerator.calcTrajectory(0.0,0.0,6.0);
 	//	l.logTrajectory(trajectory1, "DriveForward");
-	trajectory2 = smartGenerator.calcTrajectory(0.0,0.0,5.0);
+	trajectory2 = smartGenerator.calcTrajectory(0.0,0.0,89.0/12.0);
 	trajectory3 = smartGenerator.calcTrajectory(0.0,0.0,drive.angleToDistance(90.0));
 	//l.logTrajectory(trajectory3, "TurnLeft");
-	driveStraight = new DriveController(trajectory1, drive, false, false, false);
-	driveBackwards = new DriveController(trajectory2, drive, false, false, false);
+	driveStraight11 = new DriveController(trajectory1, drive, false, false, false);
+	driveStraight12 = new DriveController(trajectory2, drive, false, false, false);
 	turnLeft = new DriveController(trajectory3, drive, false, false, true);
-	driveStraightLoop = new DriveLoop(driveStraight);
-	driveBackwardsLoop = new DriveLoop(driveBackwards);
-	turnLeftLoop = new DriveLoop(turnLeft);
+	
     }
 
     public void run(){
@@ -57,16 +55,24 @@ public class RightGearOnlyMode implements java.lang.Runnable{
 				     
 	}
 	//System.out.println("dt=" + dt);
-	if(!driveStraight.isDone() && !turnLeft.isDone() && !driveBackwards.isDone()){
-	    driveStraight.control(dt);
+	if(!driveStraight1.isDone() && !turnLeft.isDone() && !driveStraight2.isDone()){
+	    driveStraight1.control(dt);
 	    //t.delay(0.75);
-	}else if(driveStraight.isDone() && !turnLeft.isDone() && !driveBackwards.isDone()){ 
+	}else if(driveStraight1.isDone() && !turnLeft.isDone() && !driveStraight2.isDone()){ 
 	    if(turnLeft.i == 0){
-		driveStraight.stop();
+		driveStraight1.stop();
 		drive.resetEncoders();
 		t.delay(0.75);
 	    }
 	    turnLeft.control(dt);
+	}else if(driveStraight1.isDone() && turnLeft.isDone() && !driveStraight2.isDone()){
+	    if(driveStraight12.i==0){
+		turnLeft.stop();
+		drive.resetEncoders();
+		t.delay(0.75);
+	    }
+
+	    driveStraight12.control(dt);
 	}
 	
 
