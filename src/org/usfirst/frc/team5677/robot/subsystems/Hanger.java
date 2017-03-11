@@ -27,8 +27,8 @@ public class Hanger{
     }
 
     public void runHanger(){
-	hangerMaster.set(-0.7);
-	hangerSlave.set(-0.7);
+	hangerMaster.set(-1.0);
+	hangerSlave.set(-1.0);
     }
 
     public void stopHanger(){

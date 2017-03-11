@@ -33,7 +33,7 @@ public class StraightOnlyMode implements java.lang.Runnable{
 	
 	//8 ft for going forward auton mode
 	this.smartGenerator = smartGenerator;
-	trajectory1	    = smartGenerator.calcTrajectory(0.0,0.0,100.0/12.0);
+	trajectory1	    = smartGenerator.calcTrajectory(0.0,0.0,6.0);
 	//l.logTrajectory(trajectory3, "TurnLeft");
 	driveStraight1 = new DriveController(trajectory1, drive, false, false, false);
     }
@@ -58,7 +58,7 @@ public class StraightOnlyMode implements java.lang.Runnable{
 	if (!driveStraight1.isDone()) {
 	    driveStraight1.control(dt);
 	    //t.delay(0.75);
-	} else if(driveStraight1.isDone() && !punchIsDone) { 
+	} /*else if(driveStraight1.isDone() && !punchIsDone) { 
 	    if (punchCount == 0) {
 		driveStraight1.stop();
 		drive.resetEncoders();
@@ -68,8 +68,11 @@ public class StraightOnlyMode implements java.lang.Runnable{
 	    gear.toggleGear(GearState.SHOOT);
 	    t.delay(0.15);
 	    gearPuncher.toggleGearPuncher(GearState.SHOOT);
-	    punchIsDone=true;
-	} else {
+	    punchIsDone=true;*/
+	//}
+	else { 
+	    gear.toggleGear(GearState.LOAD);
+	    gearPuncher.toggleGearPuncher(GearState.LOAD);
 	    drive.setLeftSpeed(0.0);
 	    drive.setRightSpeed(0.0);
 	}

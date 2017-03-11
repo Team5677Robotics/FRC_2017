@@ -31,14 +31,14 @@ public class DriveController {
 	double kI = 0.0;
 	double kD = 0.0;
 	if (isBackward) {
-	    kP = 0.275;
+	    kP = 0.1;
 	} else if (isRight) {
 	    kP = 0.30;
 	} else if (isLeft) {
 	    kP = 0.9;
 	    kI = 0.1055;
 	} else {
-	    kP=0.275;
+	    kP=0.5;
 	}
 	//double kA = 1.0/515.0;
 	double[] constants = Logger.getDriveConstants();

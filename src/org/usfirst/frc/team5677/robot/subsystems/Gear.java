@@ -25,17 +25,17 @@ public class Gear {
     public void toggleGear(GearState gearState){
 	switch(gearState){
 	case LOAD:
-	    loader.set(false);
+	    loader.set(true);
 	    locker.set(false);
 	    state = GearState.LOAD;
 	    break;
 	case SHOOT:
-	    loader.set(true);
+	    loader.set(false);
 	    locker.set(true);
 	    state = GearState.SHOOT;
 	    break;
 	default:
-	    loader.set(false);
+	    loader.set(true);
 	    locker.set(false);
 	    state = GearState.LOAD;
 	    break;
@@ -47,7 +47,7 @@ public class Gear {
     }
 
     public void closeTop() {
-	loader.set(false);
+	loader.set(true);
     }
 }
 

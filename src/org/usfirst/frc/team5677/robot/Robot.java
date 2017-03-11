@@ -48,7 +48,7 @@ public class Robot extends IterativeRobot {
     Hanger		hanger;
     SendableChooser     autoChooser;
     CameraServer        cam;
-
+    Notifier n;
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
@@ -76,8 +76,11 @@ public class Robot extends IterativeRobot {
 	autoChooser.addObject("Straight Mode", straightMode);
 	SmartDashboard.putData("Auto mode chooser", autoChooser);
 
+       
 	cam = CameraServer.getInstance();
 	cam.startAutomaticCapture("cam0",0);
+	n = new Notifier(straightMode);
+	//n = new Notifier(rightGearAutoMode);
     }
 
     /**
@@ -104,7 +107,7 @@ public class Robot extends IterativeRobot {
    
 	//System.out.println(drive.angleToDistance(45.0)+" D");
 	drive.resetEncoders();
-	Notifier n = new Notifier((Runnable) autoChooser.getSelected());
+	//n = new Notifier((Runnable) autoChooser.getSelected());
 	n.startPeriodic(0.01);
     }
     
@@ -124,6 +127,8 @@ public class Robot extends IterativeRobot {
 	// teleop starts running. If you want the autonomous to
 	// continue until interrupted by another command, remove
 	// this line or comment it out.
+	n.stop();
+	
 	if (autonomousCommand != null) autonomousCommand.cancel();
 	//testTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 	drive.resetEncoders();
@@ -168,9 +173,9 @@ public class Robot extends IterativeRobot {
 	    hanger.stopHanger();
 	}
 
-	if (controls.getCorrectionButton()) {
-	    gear.closeTop();
-	} 
+	//if (controls.getCorrectionButton()) {
+	//  gear.closeTop();
+	//} 
     }
 
     /** This function is called periodically during test mode */

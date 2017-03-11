@@ -31,7 +31,7 @@ public class ControlBoard {
     }
 
     public boolean getScoreGearButton() {
-	return joystick2.getRawButton(3);
+	return joystick1.getRawButton(6);
     }
 
     public boolean getCorrectionButton() {
