@@ -22,6 +22,7 @@ public class StraightOnlyMode implements java.lang.Runnable{
     private Logger		l;
     private double		prevTime = -1.0;
     private int punchCount = 0;
+    private boolean punchIsDone = false;
 
     public StraightOnlyMode(Drive drive, TrajectoryGenerator smartGenerator, Logger l, Gear gear, GearPuncher gearPuncher){
 	this.drive = drive;

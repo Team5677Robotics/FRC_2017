@@ -18,25 +18,25 @@ public class Gear {
     private Gear() {
 	loader = new Solenoid(Constants.kGearLoader);
 	locker = new Solenoid(Constants.kGearLocker);
-	loader.set(true);
-	locker.set(true);
+	loader.set(false);
+	locker.set(false);
     }
 
     public void toggleGear(GearState gearState){
 	switch(gearState){
 	case LOAD:
-	    loader.set(true);
-	    locker.set(true);
+	    loader.set(false);
+	    locker.set(false);
 	    state = GearState.LOAD;
 	    break;
 	case SHOOT:
-	    loader.set(false);
-	    locker.set(false);
+	    loader.set(true);
+	    locker.set(true);
 	    state = GearState.SHOOT;
 	    break;
 	default:
-	    loader.set(true);
-	    locker.set(true);
+	    loader.set(false);
+	    locker.set(false);
 	    state = GearState.LOAD;
 	    break;
 	}

@@ -7,6 +7,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.CameraServer;
 import org.usfirst.frc.team5677.lib.trajectory.Segment;
 import org.usfirst.frc.team5677.lib.trajectory.TrajectoryGenerator;
 import org.usfirst.frc.team5677.robot.controllers.ArcadeDrive;
@@ -74,7 +77,7 @@ public class Robot extends IterativeRobot {
 	SmartDashboard.putData("Auto mode chooser", autoChooser);
 
 	cam = CameraServer.getInstance();
-	cam.startAutomaticCapture("cam0");
+	cam.startAutomaticCapture("cam0",0);
     }
 
     /**
@@ -101,7 +104,7 @@ public class Robot extends IterativeRobot {
    
 	//System.out.println(drive.angleToDistance(45.0)+" D");
 	drive.resetEncoders();
-	Notifier n = new Notifier((Command) autoChooser.getSelected());
+	Notifier n = new Notifier((Runnable) autoChooser.getSelected());
 	n.startPeriodic(0.01);
     }
     
