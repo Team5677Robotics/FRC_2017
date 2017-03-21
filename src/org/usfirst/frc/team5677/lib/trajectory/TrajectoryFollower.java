@@ -24,9 +24,9 @@ public class TrajectoryFollower {
   }
 
   public double getFeedBack(double setpointPosition, double actualPosition) {
-      System.out.println("setpointPosition= "+setpointPosition+" ----------  actualPosition= "+actualPosition);
+      //System.out.println("setpointPosition= "+setpointPosition+" ----------  actualPosition= "+actualPosition);
     double error = setpointPosition - actualPosition;
-    //    System.out.println("Error: "+error);
+    System.out.println("Error: "+error);
     this.sumError += error;
     double errorDt = (error - this.prevError) / this.dt;
     this.prevError = error;
@@ -34,12 +34,23 @@ public class TrajectoryFollower {
     return (this.kP * error) + (this.kI * this.sumError) + (this.kD * errorDt);
   }
 
-    public double calcMotorOutput(double currPosition, Segment s,double dt) {
+    public double calcMotorOutput(double currPosition, Segment s,double dt, boolean isTurn) {
 	this.dt = dt;
 	double velocity = s.getVelocity();
 	double acceleration = s.getAcceleration();
-	double position = s.getPosition();
+	double position = 0.0;
+	if(isTurn){
+	    position = getAngle(s.getPosition());
+	}else{ 
+	    position = s.getPosition();
+	}
 	return getFeedForward(velocity, acceleration) + getFeedBack(position, currPosition);
 	//return getFeedForward(velocity,acceleration);
     };
+
+    public double getAngle(double feet){
+	double circumOfRobot = (27.0*Math.PI)/12.0;
+	double percent = feet/circumOfRobot;
+	return 360.0*percent;
+    }
 }

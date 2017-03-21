@@ -3,6 +3,7 @@ package org.usfirst.frc.team5677.robot.subsystems;
 import com.ctre.CANTalon;
 import org.usfirst.frc.team5677.robot.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 /** */
 public class Drive {
@@ -22,6 +23,7 @@ public class Drive {
     private CANTalon leftSlave1;
     private CANTalon leftSlave2;
     private Solenoid shifter;
+    private ADXRS450_Gyro gyro;
     
     //private final Solenoid shifter;
 
@@ -52,6 +54,9 @@ public class Drive {
 	leftSlave2.configEncoderCodesPerRev(1024);
 	rightMaster.configEncoderCodesPerRev(1024);
 	rightMaster.reverseSensor(true);
+
+	gyro = new ADXRS450_Gyro();
+	
 	rightMaster.set(0.0);
 	rightSlave1.set(0.0);
 	rightSlave2.set(0.0);
@@ -61,7 +66,23 @@ public class Drive {
 	//shifter = new Solenoid()
     }
 
+    public void setToSpeedMode(){
+	rightMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+	rightSlave1.changeControlMode(CANTalon.TalonControlMode.Speed);
+	rightSlave2.changeControlMode(CANTalon.TalonControlMode.Speed);
+	leftMaster.changeControlMode(CANTalon.TalonControlMode.Speed);
+	leftSlave1.changeControlMode(CANTalon.TalonControlMode.Speed);
+	leftSlave2.changeControlMode(CANTalon.TalonControlMode.Speed);
+    }
 
+    public void setToPercentVBusMode(){	
+	rightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	rightSlave1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	rightSlave2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	leftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	leftSlave1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+	leftSlave2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+    }
     public void setRightSpeed(double speed) {
 	//speed = -speed;
 	//speed = 0.0;
@@ -122,6 +143,18 @@ public class Drive {
 
     public double getRightSpeed(){
 	return rightMaster.getSpeed();
+    }
+
+    public void calibrateGyro(){
+	gyro.calibrate();
+    }
+
+    public void resetGyro(){
+	gyro.reset();
+    }
+
+    public double getGyroAngle(){
+	return gyro.getAngle();
     }
     
     public CANTalon getRightTalon(){

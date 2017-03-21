@@ -25,6 +25,8 @@ import org.usfirst.frc.team5677.robot.controllers.DriveController;
 import org.usfirst.frc.team5677.robot.loops.DriveLoop;
 import org.usfirst.frc.team5677.robot.auto.RightGearOnlyMode;
 import org.usfirst.frc.team5677.robot.auto.StraightOnlyMode;
+import org.usfirst.frc.team5677.robot.auto.LeftOneGearMode;
+import org.usfirst.frc.team5677.robot.auto.RightOneGearMode;
 import edu.wpi.first.wpilibj.Compressor;
 
 /**
@@ -42,6 +44,8 @@ public class Robot extends IterativeRobot {
     TrajectoryGenerator smartGenerator;
     RightGearOnlyMode	rightGearAutoMode;
     StraightOnlyMode    straightMode;
+    LeftOneGearMode     leftOneGearMode;
+    RightOneGearMode    rightOneGearMode;
     Compressor		compressor;
     Gear		gear;
     GearPuncher		gearPuncher;
@@ -66,21 +70,26 @@ public class Robot extends IterativeRobot {
 	compressor     = new Compressor();
 	compressor.setClosedLoopControl(true); 
 	drive.resetEncoders();
+	drive.calibrateGyro();
+	drive.resetGyro();
 	logger		  = new Logger();
 	
 	straightMode	  = new StraightOnlyMode(drive, smartGenerator, logger, gear, gearPuncher);
 	rightGearAutoMode = new RightGearOnlyMode(drive, smartGenerator, logger);
+	leftOneGearMode = new LeftOneGearMode(drive, smartGenerator, logger, gear, gearPuncher);
 
+	rightOneGearMode = new RightOneGearMode(drive, smartGenerator, logger, gear, gearPuncher);
 	autoChooser       = new SendableChooser();
-	autoChooser.addDefault("Right Gear Mode", rightGearAutoMode);
-	autoChooser.addObject("Straight Mode", straightMode);
+	autoChooser.addDefault("Straight Mode", straightMode);
+	autoChooser.addObject("Left 1 Gear Mode", leftOneGearMode);
 	SmartDashboard.putData("Auto mode chooser", autoChooser);
 
        
-	cam = CameraServer.getInstance();
-	cam.startAutomaticCapture("cam0",0);
-	n = new Notifier(straightMode);
-	//n = new Notifier(rightGearAutoMode);
+	//cam = CameraServer.getInstance();
+	//cam.startAutomaticCapture("cam0",0);
+	//n = new Notifier(straightMode);
+	//n = new Notifier(leftOneGearMode);
+	n = new Notifier(rightOneGearMode);
     }
 
     /**
@@ -88,7 +97,20 @@ public class Robot extends IterativeRobot {
      * any subsystem information you want to clear when the robot is disabled.
      */
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+	if(n!=null){
+	    n.stop();
+	}
+	n = null;
+	
+	System.out.println(n==null);
+	drive.resetEncoders();
+	//drive.calibrateGyro();
+	drive.resetGyro();
+	rightOneGearMode.resetDone();
+	leftOneGearMode.resetDone();
+	straightMode.resetDone();
+    }
 
     /**
      * This autonomous (along with the chooser code above) shows how to select between different
@@ -102,18 +124,44 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void autonomousInit() {
-	//System.out.println("Auto Init");
+	System.out.println("Auto Init");
 	//drive.setRightSpeed(1.0);
    
 	//System.out.println(drive.angleToDistance(45.0)+" D");
+	//drive.setToSpeedMode();
 	drive.resetEncoders();
+	//drive.calibrateGyro();
+	drive.resetGyro();
+	straightMode.resetDone();
+	leftOneGearMode.resetDone();	
+	rightOneGearMode.resetDone();
+	//n = new Notifier(straightMode);
+	//System.out.println(straightMode.isPunchDone());
 	//n = new Notifier((Runnable) autoChooser.getSelected());
+	System.out.println(n==null);
+	if(n==null){
+	    //n = new Notifier((Runnable) autoChooser.getSelected());
+	    //n = new Notifier(leftOneGearMode);
+	    n = new Notifier(rightOneGearMode);
+	}
 	n.startPeriodic(0.01);
     }
     
     public void disabledPeriodic() {
-	//n.stop();
+	System.out.println(n==null);
+	if(n!=null){
+	    n.stop();
+	}
+	n = null;	
+	System.out.println(n==null);
+	drive.resetEncoders();	
+	//drive.calibrateGyro();
+	drive.resetGyro();
+	straightMode.resetDone();
+	leftOneGearMode.resetDone();	
+	rightOneGearMode.resetDone();
     }
+    
     /** This function is called periodically during autonomous */
     @Override
     public void autonomousPeriodic() {
@@ -127,25 +175,36 @@ public class Robot extends IterativeRobot {
 	// teleop starts running. If you want the autonomous to
 	// continue until interrupted by another command, remove
 	// this line or comment it out.
-	n.stop();
+	
+	System.out.println(n==null);
+
+	if(n != null){
+	    n.stop();
+	}
+	n= null;
 	
 	if (autonomousCommand != null) autonomousCommand.cancel();
 	//testTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 	drive.resetEncoders();
+	drive.resetGyro();
 	drive.isEncodersPresent();
     }
 
     /** This function is called periodically during operator control */
     @Override
     public void teleopPeriodic() {
+	if(n!=null){
+	    n.stop();
+	}
+
 	Scheduler.getInstance().run();
-	
+
 	double	throttle = controls.getDriveThrottle();
 	double	turn	 = controls.getDriveTurn();
 	
 	smartDrive.setSpeed(throttle, turn); 
-	System.out.println("Left Encoder= "+drive.getLeftEncoder()+" ------ Right Encoder: "+drive.getRightEncoder());
-
+	//System.out.println("Left Encoder= "+drive.getLeftEncoder()+" ------ Right Encoder: "+drive.getRightEncoder());
+	System.out.println("GyroAngle: " + drive.getGyroAngle());
 	/** This is the actual code that will run the robot for competition. */
 
 	if (controls.getLowGearButton()) {

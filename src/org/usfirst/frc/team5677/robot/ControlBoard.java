@@ -23,7 +23,7 @@ public class ControlBoard {
     }
     
     public boolean getHangButton() {
-	return joystick2.getRawButton(2);
+	return joystick1.getRawButton(2);
     }
     
     public boolean getFeedGearButton() {

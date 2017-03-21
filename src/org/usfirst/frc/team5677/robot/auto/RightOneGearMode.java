@@ -11,13 +11,13 @@ import org.usfirst.frc.team5677.lib.logging.Logger;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 
-public class StraightOnlyMode implements java.lang.Runnable{
+public class RightOneGearMode implements java.lang.Runnable{
     private TrajectoryGenerator smartGenerator;
     private Drive		drive;
     private Gear                gear;
     private GearPuncher         gearPuncher;
-    private Segment[]           trajectory1, trajectory2;
-    private DriveController	driveStraight1, driveStraight2;
+    private Segment[]           trajectory1, trajectory2, trajectory3, trajectory4;
+    private DriveController	driveStraight1, turnRight1, driveStraight2, driveStraight3;
     private Timer		t	 = new Timer();
     private Logger		l;
     private double		prevTime = -1.0;
@@ -25,7 +25,7 @@ public class StraightOnlyMode implements java.lang.Runnable{
     private boolean punchIsDone = false;
     private boolean isStopped = false;
     
-    public StraightOnlyMode(Drive drive, TrajectoryGenerator smartGenerator, Logger l, Gear gear, GearPuncher gearPuncher){
+    public RightOneGearMode(Drive drive, TrajectoryGenerator smartGenerator, Logger l, Gear gear, GearPuncher gearPuncher){
 	this.drive = drive;
 	this.gear = gear;
 	this.gearPuncher = gearPuncher;
@@ -34,11 +34,15 @@ public class StraightOnlyMode implements java.lang.Runnable{
 	
 	//8 ft for going forward auton mode
 	this.smartGenerator = smartGenerator;
-	trajectory1	    = smartGenerator.calcTrajectory(0.0,0.0,74.0/12.0);
-	trajectory2 = smartGenerator.calcTrajectory(0.0,0.0,2.0);
+	trajectory1	    = smartGenerator.calcTrajectory(0.0,0.0,100.0/12.0);
+	trajectory2 = smartGenerator.calcTrajectory(0.0,0.0,drive.angleToDistance(76.0));
+	trajectory3 = smartGenerator.calcTrajectory(0.0,0.0,2.5);	
+	trajectory4 = smartGenerator.calcTrajectory(0.0,0.0,2.0);
 	//l.logTrajectory(trajectory3, "TurnLeft");
 	driveStraight1 = new DriveController(trajectory1, drive, false, false, false);
-	driveStraight2 = new DriveController(trajectory2, drive, true, false, false); 
+	turnRight1 = new DriveController(trajectory2, drive, false, false, true); 
+	driveStraight2 = new DriveController(trajectory3, drive, false, false, false);
+	driveStraight3 = new DriveController(trajectory4, drive, true, false, false);
     }
 
     public void run(){
@@ -59,14 +63,32 @@ public class StraightOnlyMode implements java.lang.Runnable{
 	}
 	//System.out.println("dt=" + dt);
 	//System.out.println(driveStraight1.isDone());
-	if (!driveStraight1.isDone() && !punchIsDone && !driveStraight2.isDone()) {
+	if (!driveStraight1.isDone() && !punchIsDone && !turnRight1.isDone() && !driveStraight2.isDone() && !driveStraight3.isDone()) {
 	    driveStraight1.control(dt);
+	    //turnRight1.control(dt);
 	    //t.delay(0.75);
 	    //System.out.println("Drive");
-	} else if(driveStraight1.isDone() && !punchIsDone && !driveStraight2.isDone()) { 
-	    if (punchCount == 0) {
+	} else if(driveStraight1.isDone() && !turnRight1.isDone() && !punchIsDone && !driveStraight2.isDone() && !driveStraight3.isDone()){
+	    if(turnRight1.i == 0){
 		driveStraight1.stop();
 		drive.resetEncoders();
+		drive.resetGyro();
+		t.delay(0.75);
+	    }
+	    turnRight1.control(dt);
+	} else if(driveStraight1.isDone() && !punchIsDone && turnRight1.isDone() && !driveStraight2.isDone() && !driveStraight3.isDone()){
+	    if(driveStraight2.i == 0){
+		turnRight1.stop();
+		drive.resetEncoders();
+		drive.resetGyro();
+		t.delay(0.75);
+	    }
+	    driveStraight2.control(dt); 
+	} else if(driveStraight1.isDone() && !punchIsDone && turnRight1.isDone() && driveStraight2.isDone() && !driveStraight3.isDone()) { 
+	    if (punchCount == 0) {
+		driveStraight2.stop();
+		drive.resetEncoders();
+		drive.resetGyro();
 		punchCount++;
 		t.delay(0.75);
 	    }
@@ -77,12 +99,11 @@ public class StraightOnlyMode implements java.lang.Runnable{
 	    punchIsDone=true;
 	    t.delay(0.75);
 	    drive.resetEncoders();
-	}
-	else if(driveStraight1.isDone() && punchIsDone && !driveStraight2.isDone()){
-	    driveStraight2.control(dt);
-	    System.out.println("DriveBackwards");
-	}
+	}  else if(driveStraight1.isDone() && punchIsDone && turnRight1.isDone() && driveStraight2.isDone() && !driveStraight3.isDone()){
+	    driveStraight3.control(dt);
+	    }
 	else { 
+	    //driveStraight3.stop();
 	    //gear.toggleGear(GearState.LOAD);
 	    //gearPuncher.toggleGearPuncher(GearState.LOAD);
 	    if(!isStopped){
@@ -101,7 +122,9 @@ public class StraightOnlyMode implements java.lang.Runnable{
 	gearPuncher.toggleGearPuncher(GearState.LOAD);
 	isStopped = false;
 	driveStraight1.resetDone();
-	driveStraight2.resetDone();
+	turnRight1.resetDone();
+	driveStraight2.resetDone();	
+	driveStraight3.resetDone();
 	punchIsDone = false;
     }
 
