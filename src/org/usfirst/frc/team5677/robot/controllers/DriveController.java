@@ -62,13 +62,11 @@ public class DriveController {
     if (i == -1) {
       System.out.println("No Trajectory");
     } else if (i >= traj.length) {
-      //	    System.out.println("Trajectory Completed");
       isDone = true;
       double motorOutput = 0.0;
       d.setRightSpeed(motorOutput);
       d.setLeftSpeed(-motorOutput);
-    } else {
-      //System.out.println(traj[i].toString()+", "+dt);
+    } else { 
       double rightInches = d.getRightEncoder() * 3.25 * Math.PI;
       double rightFeet = Math.abs(rightInches / 12.0);
       double leftInches = d.getLeftEncoder() * 3.25 * Math.PI;
@@ -130,11 +128,6 @@ public class DriveController {
       }
       i++;
     }
-  }
-
-  public void stop() {
-    d.setRightSpeed(0.0);
-    d.setLeftSpeed(0.0);
   }
 
   public boolean isDone() {

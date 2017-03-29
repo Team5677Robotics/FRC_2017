@@ -1,6 +1,6 @@
 package org.usfirst.frc.team5677.robot.states;
 
-public static class RobotState{
+public class RobotState{
 
     public static boolean isDisabled = true;
     public static boolean isEnabled = false;

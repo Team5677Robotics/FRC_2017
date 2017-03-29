@@ -1,8 +1,10 @@
 package org.usfirst.frc.team5677.robot.subsystems;
 
 import com.ctre.CANTalon;
+import edu.wpi.first.wpilibj.Solenoid;
 import org.usfirst.frc.team5677.robot.Constants;
 import org.usfirst.frc.team5677.robot.states.IntakeState;
+import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Intake {
 
@@ -12,33 +14,66 @@ public class Intake {
     return _instance;
   }
 
-  private final CANTalon intakeRoller;
-
+  private final CANTalon intakeRollerMaster, intakeRollerSlave;
+  private final Solenoid intakeArm;
+  private final AnalogInput haveGearSensor;
+    
   private IntakeState state = IntakeState.OFF;
-
+  private boolean intakeArmState = false;
+    
   private Intake() {
-    intakeRoller = new CANTalon(Constants.kIntakeRoller);
-    intakeRoller.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-    intakeRoller.set(0.0);
+    intakeRollerMaster = new CANTalon(Constants.kIntakeRollerMaster);
+    intakeRollerSlave = new CANTalon(Constants.kIntakeRollerSlave);
+    intakeArm = new Solenoid(Constants.kIntakeArm);
+    haveGearSensor = new AnalogInput(Constants.kHaveGearSensor);
+    
+    intakeRollerMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+    intakeRollerSlave.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+
+    intakeRollerMaster.set(0.0);
+    intakeRollerSlave.set(0.0);
+    intakeArm.set(false);
+    
   }
+
+    public boolean hasGear(){
+	return (haveGearSensor.getAverageVoltage()>1.5);)
+    }
 
   public void toggleIntake(IntakeState intakeState) {
     switch (intakeState) {
       case OFF:
-        intakeRoller.set(0.0);
-        state = IntakeState.OFF;
+        intakeRollerMaster.set(0.0);
+	intakeRollerSlave.set(0.0);
+	intakeArm.set(intakeArmState);
+	state = IntakeState.OFF;
         break;
       case IN:
-        intakeRoller.set(1.0);
+	intakeArm.set(true);
+	if(!hasGear()){
+	    intakeRollerMaster.set(-1.0);
+	    intakeRollerSlave.set(-1.0);
+	}else{
+	    intakeRollerMaster.set(0.0);
+	    intakeRollerSlave.set(0.0);
+	}
         state = IntakeState.IN;
+	intakeArmState = true;
         break;
       case OUT:
-        intakeRoller.set(-1.0);
+        intakeRollerMaster.set(1.0);
+	intakeRollerSlave.set(1.0);
         state = IntakeState.OUT;
         break;
+      case UP:
+	  intakeArm.set(false);
+	  intakeArmState = false;
+	  break;
       default:
-        intakeRoller.set(0.0);
-        state = IntakeState.OFF;
+        intakeRollerMaster.set(0.0);
+	intakeRollerSlave.set(0.0);
+	intakeArm.set(intakeArmState);
+	state = IntakeState.OFF;
         break;
     }
   }
