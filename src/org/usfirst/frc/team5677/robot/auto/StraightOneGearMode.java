@@ -6,11 +6,12 @@ import org.usfirst.frc.team5677.lib.trajectory.Segment;
 import org.usfirst.frc.team5677.lib.trajectory.TrajectoryGenerator;
 import org.usfirst.frc.team5677.robot.controllers.DriveController;
 import org.usfirst.frc.team5677.robot.states.GearState;
+import org.usfirst.frc.team5677.robot.states.RobotState;
 import org.usfirst.frc.team5677.robot.subsystems.Drive;
 import org.usfirst.frc.team5677.robot.subsystems.Gear;
 import org.usfirst.frc.team5677.robot.subsystems.GearPuncher;
 
-public class StraightOnlyMode implements java.lang.Runnable {
+public class StraightOneGearMode implements java.lang.Runnable {
   private TrajectoryGenerator smartGenerator;
   private Drive drive;
   private Gear gear;
@@ -20,11 +21,11 @@ public class StraightOnlyMode implements java.lang.Runnable {
   private Timer t = new Timer();
   private Logger l;
   private double prevTime = -1.0;
-  private int punchCount = 0;
+  private int punchCount = 0; 
   private boolean punchIsDone = false;
   private boolean isStopped = false;
 
-  public StraightOnlyMode(
+  public StraightOneGearMode(
       Drive drive,
       TrajectoryGenerator smartGenerator,
       Logger l,
@@ -60,41 +61,35 @@ public class StraightOnlyMode implements java.lang.Runnable {
       dt = currTime - prevTime;
       prevTime = currTime;
     }
-    //System.out.println("dt=" + dt);
-    //System.out.println(driveStraight1.isDone());
-    if (!driveStraight1.isDone() && !punchIsDone && !driveStraight2.isDone()) {
-      driveStraight1.control(dt);
-      //t.delay(0.75);
-      //System.out.println("Drive");
-    } else if (driveStraight1.isDone() && !punchIsDone && !driveStraight2.isDone()) {
-      if (punchCount == 0) {
-        driveStraight1.stop();
-        drive.resetEncoders();
-        punchCount++;
-        t.delay(0.75);
-      }
-      gear.toggleGear(GearState.SHOOT);
-      t.delay(0.15);
-      gearPuncher.toggleGearPuncher(GearState.SHOOT);
-      //System.out.println("Do Punch");
-      punchIsDone = true;
-      t.delay(0.75);
-      drive.resetEncoders();
-    } else if (driveStraight1.isDone() && punchIsDone && !driveStraight2.isDone()) {
-      driveStraight2.control(dt);
-      System.out.println("DriveBackwards");
-    } else {
-      //gear.toggleGear(GearState.LOAD);
-      //gearPuncher.toggleGearPuncher(GearState.LOAD);
-      if (!isStopped) {
-        drive.setLeftSpeed(0.0);
-        drive.setRightSpeed(0.0);
-        isStopped = true;
-      }
 
-      //System.out.println("Done");
+    if((RobotState.isDisabled || RobotState.isTeleop) && !RobotState.isAuto){
+	System.out.println("TeleopMode");
+    }else{
+	System.out.println("AutoMode");
+	if (!driveStraight1.isDone() && !punchIsDone && !driveStraight2.isDone()) {
+	    driveStraight1.control(dt);
+	} else if (driveStraight1.isDone() && !punchIsDone && !driveStraight2.isDone()) {
+	    if (punchCount == 0) {
+		drive.resetEncoders();
+		punchCount++;
+		t.delay(0.75);
+	    }
+	    gear.toggleGear(GearState.SHOOT);
+	    t.delay(0.15);
+	    gearPuncher.toggleGearPuncher(GearState.SHOOT);
+	    punchIsDone = true;
+	    t.delay(0.75);
+	    drive.resetEncoders();
+	} else if (driveStraight1.isDone() && punchIsDone && !driveStraight2.isDone()) {
+	    driveStraight2.control(dt); 
+	} else {  
+	    if (!isStopped) {
+		drive.setLeftSpeed(0.0);
+		drive.setRightSpeed(0.0);
+		isStopped = true;
+	    }
+	}
     }
-    //System.out.println("Test");
   }
 
   public void resetDone() {

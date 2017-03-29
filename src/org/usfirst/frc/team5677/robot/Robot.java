@@ -13,15 +13,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team5677.lib.logging.Logger;
 import org.usfirst.frc.team5677.lib.trajectory.TrajectoryGenerator;
 import org.usfirst.frc.team5677.robot.auto.LeftOneGearMode;
-import org.usfirst.frc.team5677.robot.auto.RightGearOnlyMode;
 import org.usfirst.frc.team5677.robot.auto.RightOneGearMode;
-import org.usfirst.frc.team5677.robot.auto.StraightOnlyMode;
+import org.usfirst.frc.team5677.robot.auto.StraightOneGearMode;
 import org.usfirst.frc.team5677.robot.controllers.ArcadeDrive;
 import org.usfirst.frc.team5677.robot.states.GearState;
+import org.usfirst.frc.team5677.robot.states.IntakeState;
+import org.usfirst.frc.team5677.robot.states.RobotState;
 import org.usfirst.frc.team5677.robot.subsystems.Drive;
 import org.usfirst.frc.team5677.robot.subsystems.Gear;
 import org.usfirst.frc.team5677.robot.subsystems.GearPuncher;
 import org.usfirst.frc.team5677.robot.subsystems.Hanger;
+import org.usfirst.frc.team5677.robot.subsystems.Intake;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -30,14 +32,12 @@ import org.usfirst.frc.team5677.robot.subsystems.Hanger;
  * resource directory.
  */
 public class Robot extends IterativeRobot {
-  Logger logger;
-  Command autonomousCommand;
+  Logger logger; 
   Drive drive;
   ControlBoard controls;
   ArcadeDrive smartDrive;
-  TrajectoryGenerator smartGenerator;
-  RightGearOnlyMode rightGearAutoMode;
-  StraightOnlyMode straightMode;
+  TrajectoryGenerator smartGenerator; 
+  StraightOneGearMode straightOneGearMode;
   LeftOneGearMode leftOneGearMode;
   RightOneGearMode rightOneGearMode;
   Compressor compressor;
@@ -46,7 +46,9 @@ public class Robot extends IterativeRobot {
   Hanger hanger;
   SendableChooser autoChooser;
   CameraServer cam;
-  Notifier n;
+  Notifier n = null;
+  Intake intake;
+    
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -67,22 +69,19 @@ public class Robot extends IterativeRobot {
     drive.calibrateGyro();
     drive.resetGyro();
     logger = new Logger();
-
-    straightMode = new StraightOnlyMode(drive, smartGenerator, logger, gear, gearPuncher);
-    rightGearAutoMode = new RightGearOnlyMode(drive, smartGenerator, logger);
+    intake = Intake.getInstance();
+    
+    straightOneGearMode = new StraightOneGearMode(drive, smartGenerator, logger, gear, gearPuncher); 
     leftOneGearMode = new LeftOneGearMode(drive, smartGenerator, logger, gear, gearPuncher);
-
     rightOneGearMode = new RightOneGearMode(drive, smartGenerator, logger, gear, gearPuncher);
     autoChooser = new SendableChooser();
-    autoChooser.addDefault("Straight Mode", straightMode);
+    autoChooser.addDefault("Straight 1 Gear Mode", straightOneGearMode);
     autoChooser.addObject("Left 1 Gear Mode", leftOneGearMode);
+    autoChooser.addObject("Right 1 Gear Mode", rightOneGearMode);
     SmartDashboard.putData("Auto mode chooser", autoChooser);
 
     //cam = CameraServer.getInstance();
     //cam.startAutomaticCapture("cam0",0);
-    //n = new Notifier(straightMode);
-    //n = new Notifier(leftOneGearMode);
-    n = new Notifier(rightOneGearMode);
   }
 
   /**
@@ -96,13 +95,16 @@ public class Robot extends IterativeRobot {
     }
     n = null;
 
+    RobotState.isDisabled = false;
+    RobotState.isAuto = false;
+    RobotState.isTeleop = false;
     System.out.println(n == null);
     drive.resetEncoders();
     //drive.calibrateGyro();
     drive.resetGyro();
     rightOneGearMode.resetDone();
     leftOneGearMode.resetDone();
-    straightMode.resetDone();
+    straightOneGearMode.resetDone();
   }
 
   /**
@@ -118,24 +120,18 @@ public class Robot extends IterativeRobot {
   @Override
   public void autonomousInit() {
     System.out.println("Auto Init");
-    //drive.setRightSpeed(1.0);
-
-    //System.out.println(drive.angleToDistance(45.0)+" D");
-    //drive.setToSpeedMode();
     drive.resetEncoders();
-    //drive.calibrateGyro();
     drive.resetGyro();
-    straightMode.resetDone();
+    straightOneGearMode.resetDone();
     leftOneGearMode.resetDone();
     rightOneGearMode.resetDone();
-    //n = new Notifier(straightMode);
-    //System.out.println(straightMode.isPunchDone());
-    //n = new Notifier((Runnable) autoChooser.getSelected());
-    System.out.println(n == null);
+    RobotState.isAuto = true;
+    //System.out.println(n == null);
     if (n == null) {
-      //n = new Notifier((Runnable) autoChooser.getSelected());
-      //n = new Notifier(leftOneGearMode);
-      n = new Notifier(rightOneGearMode);
+	n = new Notifier((Runnable) autoChooser.getSelected());
+	//n = new Notifier(straightOneGearMode);
+	//n = new Notifier(rightOneGearMode);
+	//n = new Notifier(leftOneGearMode); 
     }
     n.startPeriodic(0.01);
   }
@@ -150,7 +146,7 @@ public class Robot extends IterativeRobot {
     drive.resetEncoders();
     //drive.calibrateGyro();
     drive.resetGyro();
-    straightMode.resetDone();
+    straightOneGearMode.resetDone();
     leftOneGearMode.resetDone();
     rightOneGearMode.resetDone();
   }
@@ -169,15 +165,14 @@ public class Robot extends IterativeRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
 
-    System.out.println(n == null);
-
+    //System.out.println(n == null);
+      RobotState.isTeleop = true;
+      RobotState.isAuto = false;
     if (n != null) {
       n.stop();
     }
     n = null;
-
-    if (autonomousCommand != null) autonomousCommand.cancel();
-    //testTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+ 
     drive.resetEncoders();
     drive.resetGyro();
     drive.isEncodersPresent();
@@ -192,6 +187,7 @@ public class Robot extends IterativeRobot {
 
     Scheduler.getInstance().run();
 
+    SmartDashboard.putBoolean('Have Gear', intake.hasGear());
     double throttle = controls.getDriveThrottle();
     double turn = controls.getDriveTurn();
 
@@ -206,12 +202,9 @@ public class Robot extends IterativeRobot {
       drive.shiftLowGear(false);
     }
 
-    if (controls.getFeedGearButton()) {
-      gear.toggleGear(GearState.LOAD);
-      gearPuncher.toggleGearPuncher(GearState.LOAD);
-    } else if (controls.getScoreGearButton()) {
+    if (controls.getScoreGearButton()) {
       gear.toggleGear(GearState.SHOOT);
-      Timer.delay(0.5);
+      Timer.delay(0.15);
       gearPuncher.toggleGearPuncher(GearState.SHOOT);
     } else {
       gear.toggleGear(GearState.LOAD);
@@ -224,6 +217,15 @@ public class Robot extends IterativeRobot {
       hanger.stopHanger();
     }
 
+    if (controls.getIntakeGearButton()){
+	intake.toggleIntake(IntakeState.IN);
+    }else if (controls.getIntakeArmUpButton()){
+	intake.toggleIntake(IntakeState.UP);
+    }else if (controls.getIntakeScoreGearButton()){
+	intake.toggleIntake(IntakeState.OUT);
+    }else{
+	intake.toggleIntake(IntakeState.OFF);
+    }
     //if (controls.getCorrectionButton()) {
     //  gear.closeTop();
     //}
