@@ -6,6 +6,7 @@ import org.usfirst.frc.team5677.lib.trajectory.Segment;
 import org.usfirst.frc.team5677.lib.trajectory.TrajectoryGenerator;
 import org.usfirst.frc.team5677.robot.controllers.DriveController;
 import org.usfirst.frc.team5677.robot.states.GearState;
+import org.usfirst.frc.team5677.robot.states.RobotState;
 import org.usfirst.frc.team5677.robot.subsystems.Drive;
 import org.usfirst.frc.team5677.robot.subsystems.Gear;
 import org.usfirst.frc.team5677.robot.subsystems.GearPuncher;
@@ -38,13 +39,15 @@ public class RightOneGearMode implements java.lang.Runnable {
 
     //8 ft for going forward auton mode
     this.smartGenerator = smartGenerator;
-    trajectory1 = smartGenerator.calcTrajectory(0.0, 0.0, 90.5 / 12.0);
+    trajectory1 = smartGenerator.calcTrajectory(0.0, 0.0, 83.5 / 12.0);
     
-    trajectory2 = smartGenerator.calcTrajectory(0.0, 0.0, drive.angleToDistance(68.0));
-    trajectory3 = smartGenerator.calcTrajectory(0.0, 0.0, 3.5);
-    trajectory4 = smartGenerator.calcTrajectory(0.0, 0.0, 2.0);
+    trajectory2 = smartGenerator.calcTrajectory(0.0, 0.0, drive.angleToDistance(60.0));
+    trajectory3 = smartGenerator.calcTrajectory(0.0, 0.0, 5.0);
+    trajectory4 = smartGenerator.calcTrajectory(0.0, 0.0, 3.0);
     
     driveStraight1 = new DriveController(trajectory1, drive, false, false, false);
+    
+    //Turn Left Actually
     turnRight1 = new DriveController(trajectory2, drive, false, false, true);
     driveStraight2 = new DriveController(trajectory3, drive, false, false, false);
     driveStraight3 = new DriveController(trajectory4, drive, true, false, false);

@@ -7,14 +7,15 @@ public class Constants {
   public static final int kRightDriveMaster = 5;
   public static final int kRightDriveSlave1 = 6;
   public static final int kRightDriveSlave2 = 7;
-  public static final int kIntakeRollerMaster = 1;
-  public static final int kIntakeRollerSlave = 8;
-    public static final int kIntakeArm = 2;
-  public static final int kHangerMaster = 10;
-  public static final int kHangerSlave = 11;
-  public static final int kHangerSlave2 = 9;
+  public static final int kIntakeRollerMaster = 9;
+  public static final int kIntakeRollerSlave = 10;
+    public static final int kIntakeArm = 4;
+    public static final int kHaveGearSensor = 1;
+    public static final int kHangerMaster = 1;
+  public static final int kHangerSlave1 = 8;
+    public static final int kHangerSlave2 = 11;
   public static final int kGearLoader = 0;
-  public static final int kGearLocker = 4;
+  public static final int kGearLocker = 2;
   public static final int kGearPuncher = 1;
   public static final int kShifter = 3;
 

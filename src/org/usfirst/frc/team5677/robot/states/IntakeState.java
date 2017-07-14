@@ -4,5 +4,6 @@ public enum IntakeState {
   OFF,
   IN,
   UP,
-  OUT
+  OUT,
+  GOD,
 }

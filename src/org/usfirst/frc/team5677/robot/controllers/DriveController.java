@@ -28,23 +28,25 @@ public class DriveController {
     //double kV = 1.0/11.5;
     //double kA = 1.0/96.0;
     double kV = 1.0 / 15.0;
-    double kA = 1.0 / 80.0;
+    double kA = 1.0 / 115.0;
     double kP = 0.0;
     double kI = 0.0;
     double kD = 0.0;
     if (isBackward) {
-      kP = 0.25;
+	//kP = 0.25;
     } else if (isRight) {
-      kA = 1.0 / 60.0;
-      kP = 0.05;
-      //kD = 0.001;
-      //kI = 0.08;
+	//kA = 1.0 / 60.0;
+       kP = 0.2;
+       //kD = 0.0001;
+      kI = 0.001;
     } else if (isLeft) {
-      kA = 1.0 / 50.0;
-      kP = 0.05;
-
+	//kA = 1.0 / 50.0;
+      //kP = 0.05;
+      kP = 0.22;
+      //kD = 0.0001;
+      kI = 0.001;
     } else {
-      //kP = 0.0;
+	//kP = 0.0;
       kP = 0.25;
       //kI=0.001;
     }
@@ -76,8 +78,14 @@ public class DriveController {
       double turnHeading = Math.abs(d.getGyroAngle());
 
       if (isLeft || isRight) {
-        rightMotorOutput = rightFollower.calcMotorOutput(turnHeading, traj[i], dt, true);
-        leftMotorOutput = leftFollower.calcMotorOutput(turnHeading, traj[i], dt, true);
+	  rightMotorOutput = rightFollower.calcMotorOutput(Math.abs(turnHeading), traj[i], dt, true);
+	  leftMotorOutput = leftFollower.calcMotorOutput(Math.abs(turnHeading), traj[i], dt, true);
+	  if(rightMotorOutput>0.5){
+	      rightMotorOutput = 0.5;
+	  }
+	  if(leftMotorOutput>0.5){
+	      leftMotorOutput = 0.5;
+	  }
       } else {
         rightMotorOutput = rightFollower.calcMotorOutput(rightFeet, traj[i], dt, false);
         leftMotorOutput = leftFollower.calcMotorOutput(leftFeet, traj[i], dt, false);
@@ -89,7 +97,7 @@ public class DriveController {
         //System.out.println("Left D: "+leftFeet+"  -----  Right D:"+rightFeet);
         //System.out.println("right_m= "+rightMotorOutput+ "     left_m="+leftMotorOutput+ " ----   " + i);
         double heading = d.getGyroAngle();
-        double headingKP = 0.01;
+        double headingKP = 0.0;
         if (heading > 0.0) {
           double adjust = headingKP * heading;
           leftMotorOutput += adjust;
@@ -101,23 +109,23 @@ public class DriveController {
         d.setRightSpeed(rightMotorOutput);
         d.setLeftSpeed(-leftMotorOutput);
       } else if (isRight) {
-        //System.out.println("Right Turn");
+        System.out.println("Right Turn");
         d.setRightSpeed(-rightMotorOutput);
         d.setLeftSpeed(-leftMotorOutput);
       } else if (isLeft) {
-        //System.out.println("Left Turn");
+        System.out.println("Left Turn");
         d.setRightSpeed(rightMotorOutput);
         d.setLeftSpeed(leftMotorOutput);
       } else {
         double heading = d.getGyroAngle();
         if (heading > 0.0) {
-          double headingKP = 0.05;
+          double headingKP = 0.04;
           double adjust = headingKP * heading;
           System.out.println(adjust);
           leftMotorOutput += adjust;
         }
         if (heading < 0.0) {
-          double headingKP = 0.0;
+          double headingKP = 0.04;
           double adjust = headingKP * Math.abs(heading);
           rightMotorOutput += adjust;
         }

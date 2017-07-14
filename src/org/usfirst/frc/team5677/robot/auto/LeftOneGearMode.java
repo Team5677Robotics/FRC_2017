@@ -43,9 +43,9 @@ public class LeftOneGearMode implements java.lang.Runnable {
     this.l = l;
 
     this.smartGenerator = smartGenerator;
-    trajectory1 = smartGenerator.calcTrajectory(0.0, 0.0, 90.5 / 12.0);
-    trajectory2 = smartGenerator.calcTrajectory(0.0, 0.0, drive.angleToDistance(68.0));
-    trajectory3 = smartGenerator.calcTrajectory(0.0, 0.0, 2.5);
+    trajectory1 = smartGenerator.calcTrajectory(0.0, 0.0, 78.5 / 12.0);
+    trajectory2 = smartGenerator.calcTrajectory(0.0, 0.0, drive.angleToDistance(55.0));
+    trajectory3 = smartGenerator.calcTrajectory(0.0, 0.0, 5.0);
     trajectory4 = smartGenerator.calcTrajectory(0.0, 0.0, 2.0);
     //l.logTrajectory(trajectory3, "TurnLeft");
     driveStraight1 = new DriveController(trajectory1, drive, false, false, false);

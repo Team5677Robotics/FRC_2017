@@ -156,7 +156,7 @@ public class Drive {
   }
 
   public double getGyroAngle() {
-    return gyro.getAngle();
+      return Math.abs(gyro.getAngle());
   }
 
   public CANTalon getRightTalon() {

@@ -4,7 +4,7 @@ import org.usfirst.frc.team5677.robot.subsystems.Drive;
 
 public class ArcadeDrive {
 
-  private double gain = 1.0;
+  private double gain = 0.7;
   private Drive d;
 
   public ArcadeDrive(double gain, Drive d) {
@@ -13,9 +13,11 @@ public class ArcadeDrive {
   }
 
   public void setSpeed(double throttle, double turn) {
-    double leftSpeed, rightSpeed, skimmedLeftSpeed, skimmedRightSpeed;
-    throttle = -throttle;
-
+    double leftSpeed, rightSpeed, skimmedLeftSpeed, skimmedRightSpeed; 
+   
+    //throttle = -throttle;
+    turn = -turn;
+    
     throttle = Math.signum(throttle) * throttle * throttle;
     turn = Math.signum(turn) * turn * turn;
 
@@ -32,8 +34,8 @@ public class ArcadeDrive {
     skimmedLeftSpeed = leftSpeed + skim(rightSpeed);
     skimmedRightSpeed = rightSpeed + skim(leftSpeed);
 
-    d.setLeftSpeed(skimmedLeftSpeed);
-    d.setRightSpeed(skimmedRightSpeed);
+    d.setLeftSpeed(-skimmedLeftSpeed);
+    d.setRightSpeed(-skimmedRightSpeed);
   }
   /**
    * Does some skimming. Takes off excess speed and dishes it off to the other side.

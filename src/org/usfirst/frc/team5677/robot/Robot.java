@@ -15,6 +15,7 @@ import org.usfirst.frc.team5677.lib.trajectory.TrajectoryGenerator;
 import org.usfirst.frc.team5677.robot.auto.LeftOneGearMode;
 import org.usfirst.frc.team5677.robot.auto.RightOneGearMode;
 import org.usfirst.frc.team5677.robot.auto.StraightOneGearMode;
+import org.usfirst.frc.team5677.robot.auto.TuneAutoMode;
 import org.usfirst.frc.team5677.robot.controllers.ArcadeDrive;
 import org.usfirst.frc.team5677.robot.states.GearState;
 import org.usfirst.frc.team5677.robot.states.IntakeState;
@@ -40,6 +41,7 @@ public class Robot extends IterativeRobot {
   StraightOneGearMode straightOneGearMode;
   LeftOneGearMode leftOneGearMode;
   RightOneGearMode rightOneGearMode;
+    TuneAutoMode tuneMode;
   Compressor compressor;
   Gear gear;
   GearPuncher gearPuncher;
@@ -74,14 +76,17 @@ public class Robot extends IterativeRobot {
     straightOneGearMode = new StraightOneGearMode(drive, smartGenerator, logger, gear, gearPuncher); 
     leftOneGearMode = new LeftOneGearMode(drive, smartGenerator, logger, gear, gearPuncher);
     rightOneGearMode = new RightOneGearMode(drive, smartGenerator, logger, gear, gearPuncher);
-    autoChooser = new SendableChooser();
-    autoChooser.addDefault("Straight 1 Gear Mode", straightOneGearMode);
+    tuneMode = new TuneAutoMode(drive, smartGenerator, logger);
+    
+    autoChooser = new SendableChooser(); 
+    autoChooser.addDefault("Straight No Gear Mode", tuneMode);
+    autoChooser.addObject("Straight 1 Gear Mode", straightOneGearMode);
     autoChooser.addObject("Left 1 Gear Mode", leftOneGearMode);
     autoChooser.addObject("Right 1 Gear Mode", rightOneGearMode);
     SmartDashboard.putData("Auto mode chooser", autoChooser);
 
-    //cam = CameraServer.getInstance();
-    //cam.startAutomaticCapture("cam0",0);
+    cam = CameraServer.getInstance();
+    cam.startAutomaticCapture("cam0",0);
   }
 
   /**
@@ -125,6 +130,8 @@ public class Robot extends IterativeRobot {
     straightOneGearMode.resetDone();
     leftOneGearMode.resetDone();
     rightOneGearMode.resetDone();
+    tuneMode.resetDone();
+    
     RobotState.isAuto = true;
     //System.out.println(n == null);
     if (n == null) {
@@ -149,6 +156,7 @@ public class Robot extends IterativeRobot {
     straightOneGearMode.resetDone();
     leftOneGearMode.resetDone();
     rightOneGearMode.resetDone();
+    tuneMode.resetDone();
   }
 
   /** This function is called periodically during autonomous */
@@ -187,7 +195,9 @@ public class Robot extends IterativeRobot {
 
     Scheduler.getInstance().run();
 
-    SmartDashboard.putBoolean('Have Gear', intake.hasGear());
+    SmartDashboard.putBoolean("Have Gear", intake.hasGear());
+
+    SmartDashboard.putNumber("Voltage", intake.getVoltage());
     double throttle = controls.getDriveThrottle();
     double turn = controls.getDriveTurn();
 
@@ -212,17 +222,28 @@ public class Robot extends IterativeRobot {
     }
 
     if (controls.getHangButton()) {
+	//controls.rumbleController(1.0);
       hanger.runHanger();
-    } else {
+    } else if(controls.getGrabRopeButton()){
+	hanger.grabRope();
+    } else { 
+      controls.rumbleController(0.0);
       hanger.stopHanger();
     }
 
     if (controls.getIntakeGearButton()){
+	if(intake.hasGear()){
+	    controls.rumbleController(1.0);
+	}else{
+	    controls.rumbleController(0.0);
+	}
 	intake.toggleIntake(IntakeState.IN);
     }else if (controls.getIntakeArmUpButton()){
 	intake.toggleIntake(IntakeState.UP);
     }else if (controls.getIntakeScoreGearButton()){
 	intake.toggleIntake(IntakeState.OUT);
+    }else if (controls.getIntakeOverrideButton()){
+	intake.toggleIntake(IntakeState.GOD);
     }else{
 	intake.toggleIntake(IntakeState.OFF);
     }

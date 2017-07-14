@@ -37,7 +37,11 @@ public class Intake {
   }
 
     public boolean hasGear(){
-	return (haveGearSensor.getAverageVoltage()>1.5);)
+	return (haveGearSensor.getAverageVoltage()>2.0);
+    }
+
+    public double getVoltage(){
+	return haveGearSensor.getAverageVoltage();
     }
 
   public void toggleIntake(IntakeState intakeState) {
@@ -52,7 +56,7 @@ public class Intake {
 	intakeArm.set(true);
 	if(!hasGear()){
 	    intakeRollerMaster.set(-1.0);
-	    intakeRollerSlave.set(-1.0);
+	    intakeRollerSlave.set(1.0);
 	}else{
 	    intakeRollerMaster.set(0.0);
 	    intakeRollerSlave.set(0.0);
@@ -62,13 +66,20 @@ public class Intake {
         break;
       case OUT:
         intakeRollerMaster.set(1.0);
-	intakeRollerSlave.set(1.0);
+	intakeRollerSlave.set(-1.0);
         state = IntakeState.OUT;
         break;
       case UP:
 	  intakeArm.set(false);
 	  intakeArmState = false;
 	  break;
+      case GOD:  
+	intakeArm.set(true);
+	intakeRollerMaster.set(-1.0);
+	intakeRollerSlave.set(1.0);
+        state = IntakeState.IN;
+	intakeArmState = true;
+        break;
       default:
         intakeRollerMaster.set(0.0);
 	intakeRollerSlave.set(0.0);
